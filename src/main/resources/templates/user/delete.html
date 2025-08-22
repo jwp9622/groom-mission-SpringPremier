@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<th:block th:replace="~{/layouts/header :: header}"></th:block>
+<!-- **************** MAIN CONTENT START **************** -->
+<main>
+    <section class="section_sub_content ">
+        <div class="container ">
+
+            <div class="">
+                <!-- Title and offcanvas button -->
+                <div class="card-header  px-0 pt-0 pb-3"> <!-- -->
+                    <!-- Breadcrumb -->
+                    <nav class="mb-3" aria-label="breadcrumb">
+
+                        <ol class="breadcrumb breadcrumb-dots pt-0">
+                            <li class="breadcrumb-item"><a href="#">Home</a></li>
+                            <li class="breadcrumb-item active" aria-current="page">회원탈퇴</li>
+                        </ol>
+
+                    </nav>
+                    <!-- Title -->
+                    <h1 class="mb-3 h4">회원탈퇴</h1>
+                </div>
+            </div>
+
+
+            <!-- Form START -->
+            <form method="post" action = "/user/delete" class="card-body px-0 pb-0 pt-5 needs-validation" novalidate="">
+
+                <div>
+                    <p>탈퇴하시겠습니까?</p>
+                    <p>비밀번호 확인후 탈퇴가능합니다.</p>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <label class="form-label heading-color">password *</label>
+                    <input type="password" name="password" value="" class="form-control form-control-lg" placeholder="" required="" />
+                    <div class="valid-password"> </div>
+                    <div class="invalid_password"  th:if="${(invalid_password != null)}" th:text="${invalid_password}"> </div>
+                </div>
+
+                <div>
+                    <div th:if="${message}" th:text="${message}" style="color:red;"></div>
+                </div>
+
+
+                <!-- Button -->
+                <div class="text-center">
+                    <button type="submit" class="btn btn-lg btn-primary mb-0">확인</button>
+                    <a href="javascript:;" onclick="history.back();" class="btn btn-lg btn-dark mb-0 ">취소</a>
+                </div>
+
+            </form>
+
+            <!-- Form END -->
+
+
+
+        </div>
+    </section>
+</main>
+<!-- **************** MAIN CONTENT END **************** -->
+<th:block th:replace="~{/layouts/footer :: footer}"></th:block>
+</html>

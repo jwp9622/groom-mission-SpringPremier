@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<th:block th:replace="~{/layouts/header :: header}"></th:block>
+<!-- **************** MAIN CONTENT START **************** -->
+
+<main>
+    <section class="section_sub_content ">
+        <div class="container ">
+
+            <div class="">
+                <div class="card-header  px-0 pt-0 pb-3">
+                    <nav class="mb-3" aria-label="breadcrumb">
+                        <ol class="breadcrumb breadcrumb-dots pt-0">
+                            <li class="breadcrumb-item"><a href="#">Home</a></li>
+                            <li class="breadcrumb-item active" aria-current="page"><a href="/admin">관리자모드</a></li>
+                            <li class="breadcrumb-item active" aria-current="page">게시판관리</li>
+                        </ol>
+                    </nav>
+                    <!-- Title -->
+                    <h1 class="mb-3 h4">게시판관리</h1>
+                </div>
+            </div>
+
+
+            <!-- Form START -->
+            <form name="searchForm" method="get" action="/admin/boards"  class="rounded position-relative">
+                <div class="col-12 col-lg">
+                <div class="row gx-3  ">
+                    <div class="col col-lg-auto ms-auto">
+                        <div class="input-group bg-body">
+                            <input type="text" name="keyword" th:value="${keyword}" class="form-control" placeholder="Search" aria-label="Search" aria-describedby="search" required="" />
+                            <submit type="submit" class="btn btn-primary" onclick="document.searchForm.submit();" >검색</submit>
+                        </div>
+                    </div>
+                </div>
+                </div>
+
+            </form>
+
+
+            <p class="mt-2"><span th:text="${totalCounts}"></span>개
+                (<span th:text="${currentPage}"></span>/
+                <span th:text="${totalPages}"></span> )페이지 </p>
+            <div class="board_container">
+                <div class=" text-center">
+                    <div class="board_head row head">
+                        <div class="col" >번호</div>
+                        <div class="col">코드명</div>
+                        <div class="col">게시판명</div>
+                        <div class="col">등록일</div>
+                    </div>
+                    <th:block th:if="${not #lists.isEmpty(boards)}" th:each="row,status : ${boards}">
+                    <div class="board_body row body">
+                        <div class="col"><span th:text="${row.number}"></span></div>
+                        <div class="col"><span th:text="${row.code}"></span></div>
+                        <div class="col">
+                            <a th:href="@{/admin/boards/{id}(id=${row.id},page=${currentPage},keyword=${keyword})}">
+                                <span th:text="${row.name}"></span></a>
+                            <th:block th:if="${row.IsNew}"><span class="badge text-bg-danger">New</span></th:block>
+                        </div>
+                        <div class="col"><span th:text="${row.createdAt}"></span></div>
+                    </div>
+                    </th:block>
+                    <th:block th:unless="${not #lists.isEmpty(boards)}">
+                        <div>내용이 없습니다.</div>
+                    </th:block>
+
+                </div>
+            </div>
+
+
+            <ul class="pagination pagination-primary-soft d-flex justify-content-between mb-0">
+               <li>
+                    <ul class="list-unstyled">
+                    </ul>
+                </li>
+
+                <li>
+                    <ul class="list-unstyled">
+                        <li th:if="${not #strings.isEmpty(prevBlockPage)}" class="page-item ">
+                            <a class="page-link" th:href="@{/admin/boards(page=${prevBlockPage},keyword=${keyword}) }">이전</a>
+                        </li>
+
+                        <li class="page-item"  th:if="${not #lists.isEmpty(pageNumbers)}" th:each="row:${pageNumbers}" th:classappend="${row.isCurrent==true}?'active':'none'">
+                            <a th:href="@{/admin/boards(page=${row.num}, keyword=${keyword})}" class="page-link" th:text="${row.num}">{{num}}</a>
+                        </li>
+
+                        <li th:if="${not #strings.isEmpty(nextBlockPage)}" class="page-item" >
+                            <a class="page-link" th:href="@{/admin/boards(page=${nextBlockPage},keyword=${keyword}) }">다음</a>
+                        </li>
+                    </ul>
+                </li>
+
+                <li>
+                    <ul class="list-unstyled">
+                    </ul>
+                </li>
+            </ul>
+
+            <!-- Button -->
+            <div class="align-items-center mt-0">
+                <div class="d-grid nav-item d-sm-block text-end ">
+                    <a href="/admin/boards/new"><button type="button" class="btn btn-primary">등록</button></a>
+                </div>
+            </div>
+            <!-- Form END -->
+
+
+        </div>
+    </section>
+</main>
+<!-- **************** MAIN CONTENT END **************** -->
+<th:block th:replace="~{/layouts/footer :: footer}"></th:block>
+</html>
+

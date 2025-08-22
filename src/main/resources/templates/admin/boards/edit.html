@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<th:block th:replace="~{/layouts/header :: header}"></th:block>
+<!-- **************** MAIN CONTENT START **************** -->
+
+<main>
+    <section class="section_sub_content ">
+        <div class="container ">
+
+            <div class="">
+                <div class="card-header  px-0 pt-0 pb-3">
+                    <nav class="mb-3" aria-label="breadcrumb">
+                        <ol class="breadcrumb breadcrumb-dots pt-0">
+                            <li class="breadcrumb-item"><a href="#">Home</a></li>
+                            <li class="breadcrumb-item active" aria-current="page"><a href="/admin">관리자모드</a></li>
+                            <li class="breadcrumb-item active" aria-current="page">게시판관리</li>
+                        </ol>
+                    </nav>
+                    <!-- Title -->
+                    <h1 class="mb-3 h4">게시판관리</h1>
+                </div>
+            </div>
+
+
+            <!-- Form START -->
+            <th:block th:if="${board}">
+            <div class="">
+                <form name="form" method="post" th:action="@{/admin/boards/{id}/edit(id=${board.id})}" class="card-body px-0 pb-0 pt-5 needs-validation" novalidate="">
+                <input type="hidden" name="page" th:value="${page}" />
+                <input type="hidden" name="keyword" th:value="${keyword}" />
+                <input type="hidden" name="code" th:value="${board.code}" />
+
+                    <div class="row">
+                        <div class="col-md-2 mb-4">
+                            <label class="form-label">코드명</label>
+                            <p th:text="${board.code}"></p>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-4">
+                            <label class="form-label">게시판명</label>
+                            <input type="text" name="name" th:value="${board.name}" maxlength="20" class="form-control bg-transparent" required="" />
+                            <div class="valid_name"> </div>
+                            <div class="invalid_name"  th:if="${(invalid_name != null)}" th:text="${invalid_name}"> </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-4">
+                            <label class="form-label">설명</label>
+                            <input type="text" name="description" th:value="${board.description}" maxlength="20" class="form-control bg-transparent" required="" />
+                            <div class="valid_description"> </div>
+                            <div class="invalid_description"  th:if="${(invalid_description != null)}" th:text="${invalid_description}"> </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-2 mb-4">
+                            <label class="form-label">페이지사이즈</label>
+                            <input type="text" name="pageSize" th:value="${board.pageSize}" maxlength="2" class="form-control bg-transparent" required="" />
+                            <div class="valid_pageSize"> </div>
+                            <div class="invalid_pageSize"  th:if="${(invalid_pageSize != null)}" th:text="${invalid_pageSize}"> </div>
+                        </div>
+                    </div>
+
+                    <div class="text-center">
+                        <button type="submit" class="btn btn-lg btn-primary mb-0 " >확인</button>
+                        <button class="btn btn-lg btn-dark mb-0 " onclick="history.back();">취소</button>
+                    </div>
+
+                </form>
+            </div>
+            </th:block>
+            <!-- Form END -->
+
+
+
+        </div>
+    </section>
+</main>
+<!-- **************** MAIN CONTENT END **************** -->
+<th:block th:replace="~{/layouts/footer :: footer}"></th:block>
+</html>

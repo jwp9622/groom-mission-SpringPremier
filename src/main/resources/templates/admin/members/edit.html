@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<th:block th:replace="~{/layouts/header :: header}"></th:block>
+<!-- **************** MAIN CONTENT START **************** -->
+
+<main>
+    <section class="section_sub_content ">
+        <div class="container ">
+
+            <div class="">
+                <div class="card-header  px-0 pt-0 pb-3">
+                    <nav class="mb-3" aria-label="breadcrumb">
+
+                        <ol class="breadcrumb breadcrumb-dots pt-0">
+                            <li class="breadcrumb-item"><a href="#">Home</a></li>
+                            <li class="breadcrumb-item active" aria-current="page"><a href="/admin">관리자모드</a></li>
+                            <li class="breadcrumb-item active" aria-current="page">회원관리</li>
+                        </ol>
+
+                    </nav>
+                    <!-- Title -->
+                    <h1 class="mb-3 h4">회원관리</h1>
+                </div>
+            </div>
+
+
+            <!-- Form START -->
+            <th:block th:if="${member}">
+            <form method="post" th:action="@{/admin/members/{id}/edit(id=${member.id})}" class="needs-validation" >
+                <input type="hidden" name="memberId" th:value="${member.memberId}" />
+
+                <div class="col-md-2 mb-4">
+                    <label class="form-label heading-color">ID *</label>
+                    <p><span th:text="${member.memberId}"></span></p>
+                    <div class="valid_memberId"> </div>
+                    <div class="invalid_memberId"> </div>
+                </div>
+
+                <div class="col-md-2 mb-4">
+                    <label class="form-label heading-color">level *</label>
+                    <select name="role" class="form-control form-control-lg" required="" >
+                    <th:block th:each="role:${roles}" >
+                        <option th:selected="${role.code}==${member.role.code}" th:value="${role.code}" th:text="${role.label}"></option>
+                    </th:block>
+                    </select>
+                    <div class="valid_role"> </div>
+                    <div class="invalid_role" th:if="${(invalid_role != null)}" th:text="${invalid_role}"> </div>
+                </div>
+
+                <div class="col-md-6 mb-4">
+                    <label class="form-label heading-color">email *</label>
+                    <p><span th:text="${member.email}"></span></p>
+                    <div class="valid_email"> </div>
+                    <div class="invalid_email" th:if="${(valid_email != null)}" th:text="${valid_email}"> </div>
+                </div>
+
+                <div class="col-md-6 mb-4">
+                    <label class="form-label heading-color">username *</label>
+                    <p><span th:text="${member.username}"></span></p>
+                    <div class="valid_username"> </div>
+                    <div class="invalid_username" th:if="${(invalid_username != null)}" th:text="${invalid_username}"> </div>
+                </div>
+
+                <!-- Button -->
+                <div class="text-center">
+                    <button type="submit" class="btn btn-lg btn-primary mb-0">확인</button>
+                    <a th:href="@{/admin/members/{id}(id=${member.id}, page=${page},keyword=${keyword})}"><button type="button" class="btn btn-lg btn-dark mb-0 ">취소</button></a>
+                </div>
+
+            </form>
+            </th:block>
+            <!-- Form END -->
+
+
+
+        </div>
+    </section>
+</main>
+<!-- **************** MAIN CONTENT END **************** -->
+<th:block th:replace="~{/layouts/footer :: footer}"></th:block>
+</html>
+

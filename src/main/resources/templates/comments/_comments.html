@@ -1,0 +1,8 @@
+<div th:fragment="comentFragment" xmlns:th="http://www.w3.org/1999/xhtml">
+<div>
+    <!-- 새 댓글 작성하기 -->
+    <div th:include="/comments/_new :: comentNewFragment"></div>
+    <!-- 댓글 목록 보기 -->
+    <div th:include="/comments/_list :: comentListFragment"></div>
+</div>
+</div>

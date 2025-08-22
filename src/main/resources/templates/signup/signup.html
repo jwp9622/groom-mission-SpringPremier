@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<th:block th:replace="~{/layouts/header :: header}"></th:block>
+<!-- **************** MAIN CONTENT START **************** -->
+
+<main>
+    <section class="section_sub_content ">
+        <div class="container ">
+
+            <div class="">
+                <!-- Title and offcanvas button -->
+                <div class="card-header  px-0 pt-0 pb-3">
+                    <!-- Breadcrumb -->
+                    <nav class="mb-3" aria-label="breadcrumb">
+                        <ol class="breadcrumb breadcrumb-dots pt-0">
+                            <li class="breadcrumb-item"><a href="#">Home</a></li>
+                            <li class="breadcrumb-item active" aria-current="page">회원가입</li>
+                        </ol>
+                    </nav>
+                    <!-- Title -->
+                    <h1 class="mb-3 h4">회원가입</h1>
+                </div>
+            </div>
+
+            <!-- Form START -->
+            <form method="post" id="sign_form" onsubmit="return false" class="needs-validation" >
+
+                <div class="mb-4">
+                    <div class="col-md-4">
+                        <label class="form-label heading-color">ID *</label>
+                        <input type="text" name="memberId" maxlength="20" th:value="${member.memberId}" value="" class="form-control form-control-lg" placeholder="" required="" />
+                    </div>
+                    <div class="valid" id="valid_memberId"> </div>
+                    <div class="invalid" id="invalid_memberId" th:text="${invalid_memberId}"> </div>
+                </div>
+
+                <div class="mb-4">
+                    <div class="col-md-4">
+                        <label class="form-label heading-color">password *</label>
+                        <input type="password" name="password" maxlength="20" th:value="${member.password}"  class="form-control form-control-lg" placeholder="" required="" />
+                    </div>
+                    <div class="valid" id="valid_password"> </div>
+                    <div class="invalid" id="invalid_password" th:text="${invalid_password}"> </div>
+               </div>
+
+                <div class="mb-4">
+                    <div class="col-md-4">
+                        <label class="form-label heading-color">confirm password *</label>
+                        <input type="password" name="confirm_password" maxlength="20" th:value="${member.confirm_password}" class="form-control form-control-lg" placeholder="" required="" />
+                    </div>
+                    <div class="valid" id="valid_confirm_password"> </div>
+                    <div class="invalid" id="invalid_confirm_password" th:text="${invalid_confirm_password}"> </div>
+                </div>
+
+                <div class="mb-4">
+                    <div class="col-md-4">
+                        <label class="form-label heading-color">email *</label>
+                        <input type="email" name="email" th:value="${member.email}" class="form-control form-control-lg" placeholder="" required="" />
+                    </div>
+                    <div class="valid" id="valid_email"> </div>
+                    <div class="invalid" id="invalid_email"  th:text="${invalid_email}"> </div>
+                </div>
+
+                <div class="mb-4">
+                    <div class="col-md-4">
+                        <label class="form-label heading-color">username *</label>
+                        <input type="text" name="username" maxlength="20" th:value="${member.username}" value="" class="form-control form-control-lg" placeholder="" required="" />
+                    </div>
+                    <div class="valid" id="valid_username"> </div>
+                    <div class="invalid" id="invalid_username" th:text="${invalid_username}"> </div>
+                </div>
+
+                <div style="border:1px solid #eee;padding:1em; height:100px;overflow-y:scroll;">
+                    회원약관입니다.<br/>
+                    회원약관입니다.<br/>
+                    회원약관입니다.<br/>
+                    회원약관입니다.<br/>
+                    회원약관입니다.<br/>
+                    회원약관입니다.<br/>
+                    회원약관입니다.<br/>
+                    회원약관입니다.<br/>
+                    회원약관입니다.<br/>
+                </div>
+
+                <div class="form-check">
+                    <input type="checkbox" name="chkAgree" class="form-check-input" id="checkbox-1" required="" />
+                    <label class="form-check-label" for="checkbox-1">위의 약관에 동의합니다.</label>
+                </div>
+
+                <!-- Button -->
+                <div class="text-center">
+                    <button type="submit" id="sign_btn" class="btn btn-lg btn-primary mb-0">등록</button>
+                    <a href="#" onclick="history.back();"><button class="btn btn-lg btn-dark mb-0 ">취소</button></a>
+                </div>
+
+            </form>
+            <!-- Form END -->
+
+
+<script>
+    /*
+document.addEventListener("DOMContentLoaded", function() {
+
+    const signBtn = document.querySelector("#sign_btn");
+    signBtn.addEventListener("click", function() {
+
+        const form = document.getElementById("sign_form");
+
+        if( form.memberId.value == ""){
+            alert("아이디를 입력하세요"); form.memberId.focus(); return false;
+        }
+        if( form.password.value == ""){
+            alert("비밀번호를 입력하세요"); form.memberId.focus();  return false;
+        }
+        if( form.confirm_password.value == ""){
+            alert("비밀번호가 입력하세요."); form.memberId.focus(); return false;
+        }
+        if( form.password.value != form.confirm_password.value){
+            alert("비밀번호가 일치하여야합니다."); form.memberId.focus();  return false;
+        }
+        if( form.email.value == ""){
+            alert("이메일을 입력하세요"); form.memberId.focus();  return false;
+        }
+        if( form.username.value == ""){
+            alert("이름을 입력하세요"); form.username.focus();  return false;
+        }
+        if( form.chkAgree.checked == false){
+            alert("약관에 동의하셔아합니다."); form.chkAgree.focus();  return false;
+        }
+
+        const formObj = new FormData(form);
+        const formdata = {};
+        formObj.forEach((value,key) =>{
+            formdata[key] = value;
+        });
+        console.log(formdata);
+
+        // REST API 호출
+        const url = "/auth/signup";
+        fetch(url, {
+            method: "POST",     // post 요청
+            headers: {           // 전송 데이터 타입(JSON) 정보
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(formdata) // JSON 문자열로 변환하여 전송
+        }).catch(error => {
+            // 네트워크 오류 또는 위에서 던진 에러 처리
+            console.error('요청 실패:', error);
+        })
+        .then(response => response.json())
+        .then(data => {
+            if(data.result == true){
+                alert('회원가입 성공!');
+                window.location.href = '/';
+            }else{
+                alert('회원가입 실패!');
+                for(var key in data) {
+                  const obj = document.getElementById(key);
+                  if(obj) obj.textContent = data[key];
+                }
+
+            }
+        });
+    });
+});
+    */
+</script>
+
+
+
+        </div>
+    </section>
+</main>
+<!-- **************** MAIN CONTENT END **************** -->
+<th:block th:replace="~{/layouts/footer :: footer}"></th:block>
+</html>

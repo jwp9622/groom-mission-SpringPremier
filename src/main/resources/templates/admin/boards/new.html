@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<th:block th:replace="~{/layouts/header :: header}"></th:block>
+<!-- **************** MAIN CONTENT START **************** -->
+
+<main>
+    <section class="section_sub_content ">
+        <div class="container ">
+
+            <div class="">
+                <div class="card-header  px-0 pt-0 pb-3">
+                    <nav class="mb-3" aria-label="breadcrumb">
+
+                        <ol class="breadcrumb breadcrumb-dots pt-0">
+                            <li class="breadcrumb-item"><a href="#">Home</a></li>
+                            <li class="breadcrumb-item active" aria-current="page"><a href="/admin">관리자모드</a></li>
+                            <li class="breadcrumb-item active" aria-current="page">게시판관리</li>
+                        </ol>
+
+                    </nav>
+                    <!-- Title -->
+                    <h1 class="mb-3 h4">게시판관리</h1>
+                </div>
+            </div>
+
+
+            <!-- Form START -->
+            <form name="form" method="post" action = "/admin/boards/new" class="card-body px-0 pb-0 pt-5 needs-validation" novalidate="">
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+
+                <div class="row mb-4">
+                    <div class="col-md-2">
+                        <label class="form-label">코드명</label>
+                        <input type="text" name="code" maxlength="10" class="form-control bg-transparent" value="" required="" />
+                    </div>
+                    <div class="valid_code"> </div>
+                    <div class="invalid_code"  th:if="${(invalid_code != null)}" th:text="${invalid_code}"> </div>
+
+                </div>
+
+                <div class="row  mb-4">
+                    <div class="col-md-6">
+                        <label class="form-label">게시판명</label>
+                        <input type="text" name="name" maxlength="10" class="form-control bg-transparent" value="" required="" />
+                    </div>
+                    <div class="valid_name"> </div>
+                    <div class="invalid_name"  th:if="${(invalid_name != null)}" th:text="${invalid_name}"> </div>
+                </div>
+
+                <div class="row  mb-4">
+                    <div class="col-md-6">
+                        <label class="form-label">설명</label>
+                        <input type="text" name="description" maxlength="20"  class="form-control bg-transparent" value="" required="" />
+                    </div>
+                    <div class="valid_description"> </div>
+                    <div class="invalid_description"  th:if="${(invalid_description != null)}" th:text="${invalid_description}"> </div>
+                </div>
+
+                <div class="row mb-4">
+                    <div class="col-md-2">
+                        <label class="form-label">페이지사이즈</label>
+                        <input type="text" name="pageSize" maxlength="2" class="form-control bg-transparent" value="10" required="" />
+                    </div>
+                    <div class="valid_pageSize"> </div>
+                    <div class="invalid_pageSize"  th:if="${(invalid_pageSize != null)}" th:text="${invalid_pageSize}"> </div>
+                </div>
+
+                <!-- Button -->
+                <div class="">
+                    <button type="submit" class="btn btn-lg btn-primary mb-0 " >확인</button>
+                    <button type="button" class="btn btn-lg btn-dark mb-0 " onclick="history.back();">취소</button>
+                </div>
+
+            </form>
+            <!-- Form END -->
+
+
+
+        </div>
+    </section>
+</main>
+<!-- **************** MAIN CONTENT END **************** -->
+<th:block th:replace="~{/layouts/footer :: footer}"></th:block>
+</html>

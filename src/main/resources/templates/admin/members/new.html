@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<th:block th:replace="~{/layouts/header :: header}"></th:block>
+<!-- **************** MAIN CONTENT START **************** -->
+
+
+<main>
+    <section class="section_sub_content ">
+        <div class="container ">
+
+            <div class="">
+                <div class="card-header  px-0 pt-0 pb-3">
+                    <nav class="mb-3" aria-label="breadcrumb">
+
+                        <ol class="breadcrumb breadcrumb-dots pt-0">
+                            <li class="breadcrumb-item"><a href="#">Home</a></li>
+                            <li class="breadcrumb-item active" aria-current="page"><a href="/admin">관리자모드</a></li>
+                            <li class="breadcrumb-item active" aria-current="page">회원관리</li>
+                        </ol>
+
+                    </nav>
+                    <!-- Title -->
+                    <h1 class="mb-3 h4">회원관리</h1>
+                </div>
+            </div>
+
+            <!-- Form START -->
+            <form method="post" action="/admin/members/new" class="needs-validation" >
+
+                <div class="mb-4">
+                    <div class="col-md-4">
+                        <label class="form-label heading-color">ID *</label>
+                        <input type="text" name="memberId"  th:value="${member.memberId}" class="form-control form-control-lg col-md-4" placeholder="" required="">
+                    </div>
+                    <div class="valid_memberId" > </div>
+                    <div class="invalid_memberId"> </div>
+                </div>
+
+                <div class="mb-4">
+                    <div class="col-md-4">
+                        <label class="form-label heading-color">level *</label>
+                        <select name="role" class="form-control form-control-lg" required="">
+                            <th:block th:each="row,status : ${roles}">
+                                <option th:value="${row.code}" th:text="${row.code}"></option>
+                            </th:block>
+                        </select>
+                    </div>
+                    <div class="valid_role" th:if="${(valid_role != null)}" th:text="${valid_role}"> </div>
+                    <div class="invalid_role"> </div>
+                </div>
+
+                <div class="mb-4">
+                    <div class="col-md-4">
+                        <label class="form-label heading-color">password *</label>
+                        <input type="text" name="password" th:value="${member.password}"  class="form-control form-control-lg" placeholder="" required="" />
+                    </div>
+                    <div class="valid_password"  th:if="${(valid_password != null)}" th:text="${valid_password}"> </div>
+                    <div class="invalid_password"> </div>
+                </div>
+
+                <div class="mb-4">
+                    <div class="col-md-4">
+                        <label class="form-label heading-color">confirm password *</label>
+                        <input type="text" name="confirm_password" th:value="${member.confirm_password}" class="form-control form-control-lg" placeholder="" required="" />
+                    </div>
+                    <div class="valid_confirm_password"  th:if="${(valid_confirm_password != null)}" th:text="${valid_confirm_password}"> </div>
+                    <div class="invalid_confirm_password"> </div>
+                </div>
+
+                <div class="mb-4">
+                    <div class="col-md-4">
+                        <label class="form-label heading-color">email *</label>
+                        <input type="email" name="email" th:value="${member.email}" class="form-control form-control-lg" placeholder="" required="" />
+                    </div>
+                    <div class="valid-email"  th:if="${(valid-email != null)}" th:text="${valid-email}"> </div>
+                    <div class="invalid-email"> </div>
+                </div>
+
+                <div class="mb-4">
+                    <div class="col-md-4">
+                        <label class="form-label heading-color">username *</label>
+                        <input type="text" name="username" th:value="${member.username}" value="" class="form-control form-control-lg" placeholder="" required="" />
+                    </div>
+                    <div class="valid-username" th:if="${(valid-username != null)}" th:text="${valid-username}"> </div>
+                    <div class="invalid-username"> </div>
+                </div>
+
+                <!-- Button -->
+                <div class="text-center">
+                    <button type="submit" class="btn btn-lg btn-primary mb-0">등록</button>
+                    <a href="#" onclick="history.back();"><button class="btn btn-lg btn-dark mb-0 ">취소</button></a>
+                </div>
+
+            </form>
+            <!-- Form END -->
+
+
+
+
+        </div>
+    </section>
+</main>
+<!-- **************** MAIN CONTENT END **************** -->
+<th:block th:replace="~{/layouts/footer :: footer}"></th:block>
+</html>

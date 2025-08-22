@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<th:block th:replace="~{/layouts/header :: header}"></th:block>
+<!-- **************** MAIN CONTENT START **************** -->
+
+<main>
+    <section class="section_sub_content">
+        <div class="container ">
+            <div class="">
+                <div class="card-header  px-0 pt-0 pb-3">
+                    <nav class="mb-3" aria-label="breadcrumb">
+                        <ol class="breadcrumb breadcrumb-dots pt-0">
+                            <li class="breadcrumb-item"><a href="#">Home</a></li>
+                            <li class="breadcrumb-item active" aria-current="page"><span th:text="${board_name}"></span></li>
+                        </ol>
+                    </nav>
+                    <!-- Title -->
+                    <h1 class="mb-3 h4"><span th:text="${board_name}"></span></h1>
+                </div>
+            </div>
+
+
+            <form name="writeForm" method="post" th:action="@{/posts/{board_code}/new(board_code=${board_code})}" class="row g-4 needs-validation mt-3">
+                <div class="col-md-6">
+                    <label class="form-label heading-color">이름 *</label>
+                    <input type="text" name="name" class="form-control form-control-lg" placeholder="" required="">
+                    <div class="valid_name"></div>
+                    <div class="invalid_name" th:if="${(invalid_name != null)}" th:text="${invalid_name}"> </div>
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label heading-color">비밀번호 *</label>
+                    <input type="password" name="password" class="form-control form-control-lg" id="floatingInput" placeholder="" required="">
+                    <div class="valid_password"></div>
+                    <div class="valid_password" th:if="${(invalid_title != null)}" th:text="${invalid_title}"> </div>
+                </div>
+
+                <div class="col-12">
+                    <label class="form-label heading-color">제목 *</label>
+                    <input type="text" name="title" class="form-control form-control-lg" placeholder="" required="">
+                    <div class="valid_title"></div>
+                    <div class="invalid_title" th:if="${(invalid_title != null)}" th:text="${invalid_title}"> </div>
+                </div>
+
+                <div class="col-12">
+                    <label class="form-label heading-color">내용 *</label>
+                    <textarea name="content" class="form-control" placeholder="" id="floatingTextarea2" style="height: 150px" required=""></textarea>
+                    <div class="valid_content"></div>
+                    <div class="invalid_content" th:if="${(invalid_content != null)}" th:text="${invalid_content}"> </div>
+                </div>
+                <!-- Button -->
+                <button type="submit"  class="btn btn-lg btn-primary mb-0">확인</button>
+            </form>
+
+
+
+        </div>
+    </section>
+</main>
+<!-- **************** MAIN CONTENT END **************** -->
+<th:block th:replace="~{/layouts/footer :: footer}"></th:block>
+</html>
+

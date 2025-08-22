@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<th:block th:replace="~{/layouts/header :: header}"></th:block>
+<!-- **************** MAIN CONTENT START **************** -->
+
+
+
+<main>
+    <section class="section_sub_content ">
+        <div class="container ">
+
+            <div class="">
+                <!-- Title and offcanvas button -->
+                <div class="card-header  px-0 pt-0 pb-3"> <!-- -->
+                    <!-- Breadcrumb -->
+                    <nav class="mb-3" aria-label="breadcrumb">
+
+                        <ol class="breadcrumb breadcrumb-dots pt-0">
+                            <li class="breadcrumb-item"><a href="#">Home</a></li>
+                            <li class="breadcrumb-item active" aria-current="page">로그인</li>
+                        </ol>
+
+                    </nav>
+                    <!-- Title -->
+                    <h1 class="mb-3 h4">로그인</h1>
+                </div>
+            </div>
+
+
+
+            <!-- Form START -->
+            <div >
+            <form method="post" id="login_form" onsubmit="return false;" class="col-md-6" style="margin:0 auto;" >
+                <!-- Email -->
+                <div class="input-floating-label form-floating mb-4">
+                    <input type="text" name="username" class="form-control" id="floatingInput" placeholder="name@example.com" required="" />
+                    <label for="floatingInput">id</label>
+                </div>
+
+                <!-- Password -->
+                <div class="input-floating-label form-floating mb-4 position-relative">
+                    <input type="password" name="password" class="form-control fakepassword pe-6" id="psw-input" placeholder="Enter your password" required="" />
+                    <label for="floatingInput">Password</label>
+                    <span class="position-absolute top-50 end-0 translate-middle-y p-0 me-2">
+									<i class="fakepasswordicon fas  cursor-pointer p-2"></i>
+					</span>
+                </div>
+
+                <div class="mb-4">
+                    <div id="message" style="color:red;"></div>
+                </div>
+
+                <!-- Check box -->
+                <div class="mb-4 d-flex justify-content-between">
+
+
+                    <a href="#" class="link-underline-primary"> </a>
+                </div>
+
+                <!-- Button -->
+                <div class="align-items-center mt-0">
+                    <div class="d-grid">
+                        <button type="submit" id="login_btn" class="btn btn-dark mb-0" >Login</button>
+                    </div>
+                </div>
+            </form>
+            </div>
+            <!-- Form END -->
+
+
+
+        </div>
+    </section>
+</main>
+
+
+<!-- **************** MAIN CONTENT END **************** -->
+<th:block th:replace="~{/layouts/footer :: footer}"></th:block>
+</html>

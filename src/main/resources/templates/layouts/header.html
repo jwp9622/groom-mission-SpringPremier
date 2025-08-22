@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
+<th:block th:fragment="header">
+
+<head>
+    <title>Mizzle - Technology and Corporate Bootstrap Theme</title>
+
+    <!-- Meta Tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="author" content="Webestica.com">
+    <meta name="description" content="Technology and Corporate Bootstrap Theme">
+
+    <!-- Dark mode -->
+    <script>
+        const storedTheme = localStorage.getItem('theme')
+
+        const getPreferredTheme = () => {
+            if (storedTheme) {
+                return storedTheme
+            }
+            return window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'light'
+        }
+
+        const setTheme = function (theme) {
+            if (theme === 'auto' && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                document.documentElement.setAttribute('data-bs-theme', 'dark')
+            } else {
+                document.documentElement.setAttribute('data-bs-theme', theme)
+            }
+        }
+
+        setTheme(getPreferredTheme())
+
+        window.addEventListener('DOMContentLoaded', () => {
+            var el = document.querySelector('.theme-icon-active');
+            if(el != 'undefined' && el != null) {
+                const showActiveTheme = theme => {
+                const activeThemeIcon = document.querySelector('.theme-icon-active use')
+                const btnToActive = document.querySelector(`[data-bs-theme-value="${theme}"]`)
+                const svgOfActiveBtn = btnToActive.querySelector('.mode-switch use').getAttribute('href')
+
+                document.querySelectorAll('[data-bs-theme-value]').forEach(element => {
+                    element.classList.remove('active')
+                })
+
+                btnToActive.classList.add('active')
+                activeThemeIcon.setAttribute('href', svgOfActiveBtn)
+            }
+
+            window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+                if (storedTheme !== 'light' || storedTheme !== 'dark') {
+                    setTheme(getPreferredTheme())
+                }
+            })
+
+            showActiveTheme(getPreferredTheme())
+
+            document.querySelectorAll('[data-bs-theme-value]')
+                .forEach(toggle => {
+                    toggle.addEventListener('click', () => {
+                        const theme = toggle.getAttribute('data-bs-theme-value')
+                        localStorage.setItem('theme', theme)
+                        setTheme(theme)
+                        showActiveTheme(theme)
+                    })
+                })
+
+            }
+        })
+
+    </script>
+
+    <!-- Plugins CSS -->
+    <link rel="stylesheet" type="text/css" href="/css/all.min.css">
+    <link rel="stylesheet" type="text/css" href="/css/bootstrap-icons.css">
+    <link rel="stylesheet" type="text/css" href="/css/swiper-bundle.min.css">
+
+    <!-- Theme CSS -->
+    <link rel="stylesheet" type="text/css" href="/css/style.css">
+
+    <style>
+        .section_sub_img{ padding-top:7.5rem; padding-bottom:1rem; }
+        .section_sub_content { padding-top:0rem; padding-bottom:2rem;  }
+        .my-mytop-line {
+             border: 0;
+            border-top: var(--bs-border-width) solid;
+            color: var(--bs-border-color);
+            margin: 1rem 0;
+            opacity: 1;
+        }
+        .board_container { margin-top:1.0rem; margin-bottom:2.0rem;}
+        .board_container .head {
+            font-weight:bold;
+            color:#000;
+           padding: 1rem 0rem;
+           color: var(--bs-table-color-state, var(--bs-table-color-type, var(--bs-table-color)));
+           background-color: var(--bs-table-bg);
+           border-bottom-width: var(--bs-border-width);
+           -webkit-box-shadow: inset 0 0 0 9999px var(--bs-table-bg-state, var(--bs-table-bg-type, var(--bs-table-accent-bg)));
+           box-shadow: inset 0 0 0 9999px var(--bs-table-bg-state, var(--bs-table-bg-type, var(--bs-table-accent-bg)));
+
+            border: 0;
+            border-bottom: var(--bs-border-width) solid #dce0e5;
+            opacity: 1;
+            background:#f8f8f8;
+        }
+        .board_container .head .col { color:#000; }
+
+        .board_container .body{
+            padding: 1rem 0rem;
+            border-bottom: var(--bs-border-width) solid #dce0e5;
+            -webkit-box-shadow: inset 0 0 0 9999px var(--bs-table-bg-state, var(--bs-table-bg-type, var(--bs-table-accent-bg)));
+        }
+        .board_container .body:hover {
+          background:#f8f8f8;
+        }
+        .row {
+            margin-right: calc(0 * var(--bs-gutter-x));
+            margin-left: calc(0 * var(--bs-gutter-x));
+        }
+        .valid { color:green; }
+        .invalid{ color:red; }
+
+    @media (min-width: 576px) {
+        .ms-sm-3 {
+            margin-left: 1rem !important;
+        }
+
+    }
+    </style>
+
+    <!-- Bootstrap JS -->
+    <script src="https://mizzle.webestica.com/assets/vendor/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!--Vendors-->
+    <script src="https://mizzle.webestica.com/assets/vendor/ityped/index.js"></script>
+    <script src="https://mizzle.webestica.com/assets/vendor/swiper/swiper-bundle.min.js"></script>
+
+    <!-- Theme Functions -->
+    <script src="https://mizzle.webestica.com/assets/js/functions.js"></script>
+
+    <script src="/js/script.js"></script>
+
+
+
+</head>
+
+<body>
+
+<!-- Header START -->
+<header class="header-sticky header-absolute">
+    <!-- Logo Nav START -->
+    <nav class="navbar navbar-expand-xl">
+        <div class="container">
+            <!-- Logo START -->
+            <a class="navbar-brand me-0" href="/">
+                <img class="light-mode-item navbar-brand-item" src="https://mizzle.webestica.com/assets/images/logo.svg" alt="logo">
+                <img class="dark-mode-item navbar-brand-item" src="https://mizzle.webestica.com/assets/images/logo-light.svg" alt="logo">
+            </a>
+            <!-- Logo END -->
+
+            <!-- Main navbar START -->
+            <div class="navbar-collapse collapse" id="navbarCollapse">
+                <ul class="navbar-nav navbar-nav-scroll dropdown-hover mx-auto">
+
+                    <!-- Nav item -->
+                    <li class="nav-item dropdown">
+                        <a class="nav-link " href="/intro">회사소개</a> <!-- active -->
+
+                    </li>
+
+                    <!-- Nav item -->
+                    <li class="nav-item dropdown"  >
+                        <a class="nav-link " href="/posts/notice" >공지사항</a>
+                    </li>
+                    <li class="nav-item dropdown"  >
+                        <a class="nav-link " href="/posts/qna" >QNA</a>
+                    </li>
+                </ul>
+            </div>
+            <!-- Main navbar END -->
+
+            <!-- Buttons -->
+            <ul class="nav align-items-center dropdown-hover ms-sm-2">
+                <!-- Sign up button -->
+
+                <li sec:authorize="isAuthenticated()" class="top_menu">
+                    <a href="/admin" sec:authorize="hasAuthority('ROLE_ADMIN')">관리자모드</a>
+                    <a href="/user/mypage" >마이페이지</a> /
+                    <a href="#" onclick="logout();">로그아웃</a>
+                    <span sec:authorize="hasAuthority('ADMIN')"></span>
+                </li>
+
+                <li sec:authorize="isAnonymous()" class="nav-item me-2 d-none d-sm-block">
+                    <a href="/login" class="btn btn-sm btn-light mb-0">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person-circle" viewBox="0 0 16 16">
+                            <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0"/>
+                            <path fill-rule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1"/>
+                        </svg>
+                        로그인</a>
+                </li>
+
+                <!-- Buy now button -->
+                <li sec:authorize="isAnonymous()" class="nav-item d-none d-sm-block">
+                    <a href="/signup"><button class="btn btn-sm btn-primary mb-0">회원가입</button></a>
+                </li>
+
+                <li class="nav-item">
+                    <button class="navbar-toggler ms-sm-3 p-2" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+						<span class="navbar-toggler-animation">
+							<span></span>
+							<span></span>
+							<span></span>
+						</span>
+                    </button>
+                </li>
+            </ul>
+
+        </div>
+    </nav>
+    <!-- Logo Nav END -->
+</header>
+<!-- Header END -->
+
+
+
+<section class="section_sub_img"  >
+    <hr class="my-mytop-line"/>
+</section>
+
+</th:block>
+

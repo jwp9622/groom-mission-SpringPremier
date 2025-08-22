@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<th:block th:replace="~{/layouts/header :: header}"></th:block>
+<!-- **************** MAIN CONTENT START **************** -->
+
+<main>
+    <section class="section_sub_content ">
+        <div class="container ">
+
+            <div class="">
+                <div class="card-header  px-0 pt-0 pb-3">
+                    <nav class="mb-3" aria-label="breadcrumb">
+
+                        <ol class="breadcrumb breadcrumb-dots pt-0">
+                            <li class="breadcrumb-item"><a href="#">Home</a></li>
+                            <li class="breadcrumb-item active" aria-current="page"><a href="/admin">관리자모드</a></li>
+                            <li class="breadcrumb-item active" aria-current="page">게시판관리</li>
+                        </ol>
+
+                    </nav>
+                    <!-- Title -->
+                    <h1 class="mb-3 h4">게시판관리</h1>
+                </div>
+            </div>
+
+
+            <!-- Form START -->
+            <th:block th:if="${board}">
+            <form name="form" method="post" th:action="@{/admin/boards/{id}/delete(id=${board.id})}" class="card-body px-0 pb-0 pt-5 needs-validation" novalidate="">
+            <input type="hidden" name="page" th:value="${page}" />
+            <input type="hidden" name="keyword" th:value="${keyword}" />
+            <input type="hidden" name="code" th:value="${board.code}" />
+
+            <div class="">
+                <div class="row mb-3">
+                    <label class="col-sm-2 col-form-label">코드명</label>
+                    <div class="col-sm-10">
+                        <span th:text="${board.code}"></span>
+                     </div>
+                </div>
+
+                <div class="row mb-3">
+                    <label class="col-sm-2 col-form-label">게시판명</label>
+                    <div class="col-sm-10">
+                        <span th:text="${board.name}"></span>
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <label class="col-sm-2 col-form-label">설명</label>
+                    <div class="col-sm-10">
+                        <span th:text="${board.description}"></span>
+                    </div>
+                </div>
+
+                <div>
+                    <p>삭제하시겠습니까?</p>
+                    <p style="color:red;" class="invalid_data" th:if="${(invalid_data != null)}" th:text="${invalid_data}"></p>
+                </div>
+
+                <!-- Button -->
+                <div class="text-center">
+                    <button type="submit" class="btn btn-lg btn-primary mb-0">삭제</button>
+                    <a th:href="@{/admin/boards/{id}(id=${board.id})}"><button type="button" class="btn btn-lg btn-dark mb-0 ">취소</button></a>
+                </div>
+
+            </div>
+            </form>
+            </th:block>
+
+            <!-- Form END -->
+
+
+
+        </div>
+    </section>
+</main>
+<!-- **************** MAIN CONTENT END **************** -->
+<th:block th:replace="~{/layouts/footer :: footer}"></th:block>
+</html>

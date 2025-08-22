@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<th:block th:replace="~{/layouts/header :: header}"></th:block>
+<!-- **************** MAIN CONTENT START **************** -->
+
+<main>
+    <section class="section_sub_content ">
+        <div class="container ">
+
+            <div class="">
+                <div class="card-header  px-0 pt-0 pb-3">
+                    <nav class="mb-3" aria-label="breadcrumb">
+
+                        <ol class="breadcrumb breadcrumb-dots pt-0">
+                            <li class="breadcrumb-item"><a href="#">Home</a></li>
+                            <li class="breadcrumb-item active" aria-current="page"><a href="/admin">관리자모드</a></li>
+                            <li class="breadcrumb-item active" aria-current="page">회원관리</li>
+                        </ol>
+
+                    </nav>
+                    <!-- Title -->
+                    <h1 class="mb-3 h4">회원관리</h1>
+                </div>
+            </div>
+
+
+            <!-- Search and buttons -->
+            <form name="searchForm" method="get" action="/admin/members"  class="rounded position-relative">
+                <div class="col-12 col-lg">
+                    <div class="row gx-3  ">
+                        <div class="col col-lg-auto ms-auto">
+                            <div class="input-group bg-body">
+                                <input type="text" name="keyword" th:value="${keyword}" class="form-control" placeholder="Search" aria-label="Search" aria-describedby="search" required="" />
+                                <submit type="submit" class="btn btn-primary" onclick="document.searchForm.submit();" >검색</submit>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+
+            <!-- Form START -->
+            <p class="mt-2"><th:block th:text="${totalCounts}"></th:block>개
+                (<th:block th:text="${currentPage}"></th:block>/
+                <th:block th:text="${totalPages}"></th:block> )페이지 </p>
+            <table class="table">
+                <thead>
+                <tr>
+                    <th scope="col">번호</th>
+                    <th scope="col">아이디</th>
+                    <th scope="col">이름</th>
+                    <th scope="col">이메일</th>
+                    <th scope="col">등록일</th>
+                </tr>
+                </thead>
+                <tbody>
+                    <tr th:if="${not #lists.isEmpty(members)}" th:each="row, status : ${members}">
+                        <th th:text="${row.number}"></th>
+                        <th th:text="${row.memberId}"></th>
+                        <td><a th:href="@{/admin/members/{id}(id=${row.id}, page=${currentPage},keyword=${keyword})}" th:text="${row.username}"></a>
+                            <th:block th:if="${row.IsNew}"><span class="badge text-bg-danger">New</span></th:block>
+                        </td>
+                        <td th:text="${row.email}"></td>
+                        <td th:text="${row.createdAt}"></td>
+                    </tr>
+                    <tr th:unless="${not #lists.isEmpty(members)}">
+                        <td colspan="5">내용이 없습니다.</td>
+                    </tr>
+                </tbody>
+            </table>
+
+
+            <ul class="pagination pagination-primary-soft d-flex justify-content-between mb-0">
+                <li>
+                    <ul class="list-unstyled">
+                    </ul>
+                </li>
+
+                <li>
+                    <ul class="list-unstyled">
+                            <li th:if="${not #strings.isEmpty(prevBlockPage)}" class="page-item ">
+                                <a class="page-link" th:href="@{/admin/members(page=${prevBlockPage},keyword=${keyword}) }">이전</a>
+                            </li>
+
+                            <li class="page-item"  th:if="${not #lists.isEmpty(pageNumbers)}" th:each="row:${pageNumbers}" th:classappend="${row.isCurrent==true}?'active':'none'">
+                                <a th:href="@{/admin/members(page=${row.num}, keyword=${keyword})}" class="page-link" th:text="${row.num}">{{num}}</a>
+                            </li>
+
+                            <li th:if="${not #strings.isEmpty(nextBlockPage)}" class="page-item" >
+                                <a class="page-link" th:href="@{/admin/members(page=${nextBlockPage},keyword=${keyword}) }">다음</a>
+                            </li>
+                    </ul>
+                </li>
+
+                <li>
+                    <ul class="list-unstyled">
+                    </ul>
+                </li>
+            </ul>
+            <!-- Form END -->
+
+
+        </div>
+    </section>
+</main>
+
+<!-- **************** MAIN CONTENT END **************** -->
+<th:block th:replace="~{/layouts/footer :: footer}"></th:block>
+</html>

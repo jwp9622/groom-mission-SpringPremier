@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<th:block th:replace="~{/layouts/header :: header}"></th:block>
+<!-- **************** MAIN CONTENT START **************** -->
+
+<main>
+    <section class="section_sub_content ">
+        <div class="container ">
+
+            <div class="">
+                <!-- Title and offcanvas button -->
+                <div class="card-header  px-0 pt-0 pb-3"> <!-- -->
+                    <!-- Breadcrumb -->
+                    <nav class="mb-3" aria-label="breadcrumb">
+
+                        <ol class="breadcrumb breadcrumb-dots pt-0">
+                            <li class="breadcrumb-item"><a href="#">Home</a></li>
+                            <li class="breadcrumb-item active" aria-current="page">mypage</li>
+                        </ol>
+
+                    </nav>
+                    <!-- Title -->
+                    <h1 class="mb-3 h4">mypage</h1>
+                </div>
+            </div>
+
+
+
+            <!-- Form START -->
+            <div>
+                <p><span th:text="${member.memberId}"></span>님 </p>
+                <p><a href="/user/edit">정보수정</a></p>
+                <p><a href="/user/delete">회원탈퇴</a></p>
+                <p><a href="javascript:" onclick="logout();">로그아웃</a></p>
+
+            </div>
+            <!-- Form END -->
+
+
+
+
+        </div>
+    </section>
+</main>
+
+<!-- **************** MAIN CONTENT END **************** -->
+<th:block th:replace="/layouts/footer :: footer"></th:block>
+</html>

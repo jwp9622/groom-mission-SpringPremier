@@ -1,0 +1,460 @@
+<div th:fragment="comentListFragment" xmlns:th="http://www.w3.org/1999/xhtml">
+<div id="comments-list">
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="comment-edit-modal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">
+                    댓글 수정</h5>
+                <button type="button"
+                        class="btn-close"
+                        data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <!-- 댓글 수정 폼 -->
+                <form method="post" onSubmit="return false;">
+                    <!-- 닉네임 입력 -->
+                    <div class="mb-3">
+                        <label class="form-label">닉네임</label>
+                        <input type="text" maxlength="20" class="form-control"
+                               id="edit-comment-nickname" placeholder="" required="" />
+                    </div>
+                    <!-- 댓글 본문 입력 -->
+                    <div class="mb-3">
+                        <label class="form-label">댓글 내용</label>
+                        <textarea type="text" class="form-control" rows="3"
+                                  id="edit-comment-content" placeholder="" required=""></textarea>
+                    </div>
+                    <!-- 댓글 비밀번호 -->
+                    <div class="mb-3">
+                        <label class="form-label">비밀번호</label>
+                        <input type="password" maxlength="10" class="form-control"
+                               id="edit-comment-password" placeholder="" required="" />
+                        <p id="edit-comment-msg"></p>
+                    </div>
+                    <!-- 히든 인풋 -->
+                    <input type="hidden" name="id" id="edit-comment-id">
+                    <input type="hidden" name="post_id" id="edit-comment-post-id">
+                    <!-- 전송 버튼 -->
+                    <button type="submit" class="btn btn-primary"
+                            id="comment-update-btn">수정 완료</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="password-check-modal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="checkModalLabel">
+                    비밀번호확인</h5>
+                <button type="button"
+                        class="btn-close"
+                        data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <!-- 댓글 수정 폼 -->
+                <form method="post" onSubmit="return false;"><!--  action = "/api/posts/comments/3/passwordCheck" -->
+                    <!-- 댓글 비밀번호 -->
+                    <div class="mb-3">
+                        <label class="form-label">비밀번호</label>
+                        <input type="password" maxlength="10" class="form-control"
+                               id="check-comment-password" placeholder="" required="" />
+                        <p id="check-comment-msg"></p>
+                    </div>
+                    <input type="hidden" name="id" id="check-comment-id" value="" />
+                    <input type="hidden" name="post_id" id="check-comment-post-id" value="" />
+                    <input type="hidden" name="mode" id="check-comment-mode" value="" />
+                    <!-- 전송 버튼 -->
+                    <button type="submit" class="btn btn-primary"
+                            id="check-comment-btn">확인</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 모달 이벤트 처리-->
+<script>
+window.onload = function(){
+    //게시물 가져오기
+    getList();
+}
+</script>
+<script>
+    function formatDateTime(dateString) {
+      const date = new Date(dateString);
+
+      const yyyy = date.getFullYear();
+      const mm = String(date.getMonth() + 1).padStart(2, '0'); // 월은 0부터 시작
+      const dd = String(date.getDate()).padStart(2, '0');
+      const HH = String(date.getHours()).padStart(2, '0');
+      const min = String(date.getMinutes()).padStart(2, '0');
+
+      return `${yyyy}-${mm}-${dd} ${HH}:${min}`;
+    }
+
+        function getList(){
+
+            //목록 가져오기
+             const commentList = document.querySelector("#comments-list");
+             const postId = document.querySelector("#new-comment-post-id").value;
+
+             if(commentList){
+                 // fetch() - 비동기 통신을 위한 API
+                 const url = "/api/posts/" + postId+"/comments" ;
+
+                 fetch(url)
+                 .then(response => response.json())
+                 .then(data => {
+                     commentList.innerHTML = ""; // 기존 댓글 초기화
+                     if (data.length === 0) {
+                         commentList.innerHTML = "<p>댓글이 없습니다.</p>";
+                         return;
+                     }
+                     data.forEach(comment => {
+
+                         const html = addComment(postId, comment.id, comment.nickname, comment.content, formatDateTime(comment.createdAt));
+                         commentList.appendChild(html);
+                      });
+
+                      //동적 객체 추가후, 수정, 삭제 클릭이벤트 호출
+                      getEditDeleteClickEvent();
+
+                 }).catch(error => {
+                     console.error("댓글 불러오기 실패:", error);
+                     const commentList = document.querySelector("#comments-list");
+                     commentList.innerHTML = "<li>댓글을 불러오는 중 오류가 발생했습니다.</li>";
+                 });
+             }
+        }
+
+        //코멘트 수정, 삭제 버튼 클릭 이벤튼
+        function getEditDeleteClickEvent(){
+
+            //수정, 삭제 버튼 클릭 이벤트
+            const commentBtns = document.querySelectorAll(".comment-edit-btn, .comment-delete-btn");
+            commentBtns.forEach(button => {
+                button.addEventListener("click", (event)=>{
+
+                    // 1. 트리거 버튼 선택
+                    const triggerBtn = event.target;
+
+                    // 2. 데이터 가져오기
+                    const id = triggerBtn.getAttribute("data-bs-id");
+                    const post_id = triggerBtn.getAttribute("data-bs-post-id");
+                    const mode = triggerBtn.getAttribute("data-bs-mode");
+
+                    // 3. 수정 폼에 데이터 반영
+                    document.querySelector("#check-comment-password").value = "";
+                    document.querySelector("#check-comment-id").value = id;
+                    document.querySelector("#check-comment-post-id").value = post_id;
+                    document.querySelector("#check-comment-mode").value = mode;
+
+                    const msg = document.querySelector("#check-comment-msg");
+                    msg.textContent = "";
+
+                });
+            });
+            //const commentRegButtons = document.querySelectorAll(".comment-create-btn");
+
+        }
+</script>
+
+
+<script>
+    //게시물 추가
+    function addComment( post_id, id, nickname, content, createdAt) {
+
+        // 부모 요소 (댓글 리스트가 들어갈 곳)
+        const commentList = document.getElementById('comment-list'); // 여기에 댓글 div들을 추가
+
+        // 댓글 카드 div 생성
+        const card = document.createElement('div');
+        card.id = 'comments-'+id;
+        card.className = 'card_list card m-2';
+
+        // card-header 생성
+        const header = document.createElement('div');
+        header.className = 'card-header';
+
+        const titleSpan = document.createElement('span');
+        titleSpan.className = 'title';
+        titleSpan.textContent = nickname +" / "+createdAt;
+
+        // 수정 버튼
+        const editButton = document.createElement('button');
+        editButton.type = 'button';
+        //editButton.className = 'edit-btn btn btn-sm btn-outline-primary comment-edit-btn';
+        editButton.classList.add("edit-btn", "btn", "btn-sm", "btn-outline-primary", "comment-edit-btn");
+        editButton.setAttribute('data-bs-toggle', 'modal');
+        //editButton.setAttribute('data-bs-target', '#comment-edit-modal'); //수정
+        editButton.setAttribute('data-bs-target', '#password-check-modal'); //비밀번호
+
+        editButton.setAttribute('data-bs-mode', 'edit');
+        editButton.setAttribute('data-bs-id', id);
+        editButton.setAttribute('data-bs-nickname', nickname);
+        editButton.setAttribute('data-bs-content', content);
+        editButton.setAttribute('data-bs-post-id', post_id);
+        editButton.textContent = '수정';
+
+        // 삭제 버튼
+        const deleteButton = document.createElement('button');
+        deleteButton.type = 'button';
+        deleteButton.className = 'btn btn-sm btn-outline-danger comment-delete-btn';
+        deleteButton.setAttribute('data-bs-toggle', 'modal');
+        deleteButton.setAttribute('data-bs-target', '#password-check-modal'); //비밀번호
+
+        deleteButton.setAttribute('data-bs-mode', 'delete');
+        deleteButton.setAttribute('data-bs-id', id);
+        deleteButton.setAttribute('data-bs-post-id', post_id);
+        deleteButton.textContent = '삭제';
+
+        // header에 요소 추가
+        header.appendChild(titleSpan);
+        header.appendChild(editButton);
+        header.appendChild(deleteButton);
+
+        // card-body 생성
+        const body = document.createElement('div');
+        body.className = 'card-body';
+
+        const contentSpan = document.createElement('span');
+        contentSpan.className = 'content';
+        contentSpan.textContent = content;
+
+        body.appendChild(contentSpan);
+
+        // 구분선
+        const hr = document.createElement('hr');
+        const p = document.createElement('p');
+        p.appendChild(hr);
+
+        // card에 header, body, hr 추가
+        card.appendChild(header);
+        card.appendChild(body);
+        card.appendChild(p);
+
+        // commentList에 카드 추가
+        return card;
+        //commentList.appendChild(card);
+    }
+
+</script>
+
+<script>
+//비밀번호 입력후 확인버튼 클릭시
+document.addEventListener("DOMContentLoaded", function() {
+
+    // 확인버튼 클릭
+    const confirmBtn = document.querySelector("#check-comment-btn");
+    confirmBtn.addEventListener("click", function() {
+
+        // 댓글 객체 생성
+        const comment = {
+            id: document.querySelector("#check-comment-id").value,
+            post_id: document.querySelector("#check-comment-post-id").value,
+            mode: document.querySelector("#check-comment-mode").value,
+            password: document.querySelector("#check-comment-password").value
+        };
+
+        // REST API 호출
+        const url = "/api/posts/comments/passwordCheck/"+ comment.id;
+        fetch(url, {
+            method: "post",     // post 요청
+            headers: {           // 전송 데이터 타입(JSON) 정보
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(comment) // JSON 문자열로 변환하여 전송
+        }).catch(error => {
+            // 네트워크 오류 또는 위에서 던진 에러 처리
+            //console.error('요청 실패:', error);
+        })
+        .then(response => {
+            if(!response.ok){
+                //메시지 출력
+                const msg = document.querySelector("#check-comment-msg");
+                msg.textContent = "비밀번호가 일치하지 않습니다.";
+            }else{
+
+                //비밀번호 내용 지우기
+                document.querySelector("#check-comment-password").value= "";
+                const msg = document.querySelector("#check-comment-msg");
+                msg.textContent = "";
+
+                //비밀번호 모달창 닫기
+                const modalElement = document.querySelector("#password-check-modal");
+                modalElement.classList.remove("show");
+                modalElement.style.display = "";
+                modalElement.removeAttribute('style');
+                modalElement.removeAttribute('aria-modal');
+                modalElement.removeAttribute('role');
+
+                const myModal = new bootstrap.Modal(modalElement);
+                myModal.hide();
+
+                //모달 배경 없애기
+                const modal_backdrop = document.querySelector(".modal-backdrop");
+                modal_backdrop.remove();
+
+                //배경 hidden 처리 없애기
+                document.body.style.overflow = "";
+
+                if(comment.mode == "edit"){
+                    // edit modal 띄우기
+                    commentApiEditModal(comment);
+                }else if(comment.mode == "delete"){
+                    //글삭제하기
+                    commentApiDelete(comment);
+                }
+
+            }
+        });
+
+    });
+
+});
+</script>
+
+<script>
+//edit 모달 띄우기
+function commentApiEditModal(comment){
+
+        //수정버튼 클릭시 modal에 데이터 가져오기
+        const commentEditModalEle = document.querySelector("#comment-edit-modal");
+        const commentEditModal = new bootstrap.Modal(commentEditModalEle);
+        commentEditModal.show();
+
+        // 1. 트리거 버튼 선택
+        const parentDiv = document.querySelector("#comments-"+(comment.id));
+        const triggerBtn = parentDiv.querySelectorAll(".comment-edit-btn");
+        const firstTriggerBtn = triggerBtn[0];
+
+        // 2. 데이터 가져오기
+        const id = firstTriggerBtn.getAttribute("data-bs-id");
+        const nickname = firstTriggerBtn.getAttribute("data-bs-nickname");
+        const content = firstTriggerBtn.getAttribute("data-bs-content");
+        const post_id = firstTriggerBtn.getAttribute("data-bs-post-id");
+
+        //.log("id="+id);
+        //console.log("nickname="+nickname);
+        //console.log("content="+content);
+        //console.log("post_id="+post_id);
+
+        // 3. 수정 폼에 데이터 반영
+        document.querySelector("#edit-comment-nickname").value = nickname;
+        document.querySelector("#edit-comment-content").value = content;
+        document.querySelector("#edit-comment-id").value = id;
+        document.querySelector("#edit-comment-post-id").value = post_id;
+
+}
+
+//수정하기 버튼을 클릭했을때
+document.addEventListener("DOMContentLoaded", function() {
+    // 수정 완료 버튼 선택
+    const commentUpdateBtn = document.querySelector("#comment-update-btn");
+    // 클릭 이벤트 처리
+    commentUpdateBtn.addEventListener("click", function() {
+        // 수정 댓글 객체 생성
+        const comment = {
+            id: document.querySelector("#edit-comment-id").value,
+            nickname: document.querySelector("#edit-comment-nickname").value,
+            content: document.querySelector("#edit-comment-content").value,
+            post_id: document.querySelector("#edit-comment-post-id").value,
+            password: document.querySelector("#edit-comment-password").value
+        };
+
+        // 수정 REST API 호출
+        //const url = "/api/posts/comments/" + comment.id+"";
+        const url = "/api/posts/comments/"+ comment.id;
+        fetch(url, {
+            method: "PATCH",     // PATCH 요청
+            headers: {           // 전송 데이터 타입(JSON) 정보
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(comment) // JSON 문자열로 변환하여 전송
+        }).then(response => {
+            //console.log("response==="+response);
+            if(!response.ok){
+                //실패 메시지 출력
+                //const msg = document.querySelector("#edit-comment-msg");
+                //msg.textContent = "비밀번호가 일치하지 않습니다.";
+
+                alert("수정 실패하였습니다.");
+            }else{
+
+                //비밀번호 내용 지우기
+                document.querySelector("#edit-comment-nickname").value= "";
+                document.querySelector("#edit-comment-content").value= "";
+                document.querySelector("#edit-comment-password").value= "";
+
+                //비밀번호 메시지 배우기
+                const msg = document.querySelector("#edit-comment-msg");
+                msg.textContent = "";
+
+                //비밀번호 모달창 닫기
+                const modalElement = document.querySelector("#comment-edit-modal");
+                modalElement.classList.remove("show");
+                modalElement.style.display = "";
+                modalElement.removeAttribute('style');
+                modalElement.removeAttribute('aria-modal');
+                modalElement.removeAttribute('role');
+
+                const myModal = new bootstrap.Modal(modalElement);
+                myModal.hide();
+
+                //모달 배경 없애기
+                const modal_backdrop = document.querySelector(".modal-backdrop");
+                modal_backdrop.remove();
+
+
+                // 수정 성공 시 메시지 창 띄우기
+                alert("댓글을 수정하였습니다");
+
+                //목록 다시 받아오기
+                getList();
+            }
+
+        });
+    });
+
+});
+</script>
+
+<!-- 댓글 삭제 -->
+<script>
+function commentApiDelete(comment){
+
+    const url = "/api/posts/comments/"+ comment.id;
+    fetch(url, {
+        method: "DELETE",     // PATCH 요청
+        headers: {           // 전송 데이터 타입(JSON) 정보
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(comment) // JSON 문자열로 변환하여 전송
+    }).then(response => {
+        // 댓글 삭제 실패 처리
+        if (!response.ok) {
+            //메시지창 띄우기
+            alert("댓글을 삭제 실패했습니다");
+        }else{
+            //목록 다시 받아오기
+            getList();
+
+            // 삭제 성공 시 메시지 창 띄우기
+            alert("댓글을 삭제했습니다");
+        }
+    });
+
+
+}
+</script>
+</div>

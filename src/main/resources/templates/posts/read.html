@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<th:block th:replace="~{/layouts/header :: header}"></th:block>
+<!-- **************** MAIN CONTENT START **************** -->
+
+<main>
+    <section class="section_sub_content">
+        <div class="container ">
+            <div class="">
+                <div class="card-header  px-0 pt-0 pb-3">
+                    <nav class="mb-3" aria-label="breadcrumb">
+                        <ol class="breadcrumb breadcrumb-dots pt-0">
+                            <li class="breadcrumb-item"><a href="#">Home</a></li>
+                            <li class="breadcrumb-item active" aria-current="page"><span th:text="${board_name}"></span></li>
+                        </ol>
+                    </nav>
+                    <!-- Title -->
+                    <h1 class="mb-3 h4"><span th:text="${board_name}"></span></h1>
+                </div>
+            </div>
+
+            <th:block th:if="${post}">
+            <div class="card shadow p-4 p-sm-5 p-md-6">
+                <div class="card-header border-bottom px-0 pt-0 pb-3">
+                    <!-- Title -->
+                    <h3 class="mb-3 h5"><span th:text="${post.title}"></span></h3>
+                    <p class="mb-0"><a href="#"></a></p>
+                </div>
+
+                <div class="col-md-6  pt-4">
+                    <label class="form-label heading-color"><span th:text="${post.name}"></span> / <span th:text="${#temporals.format(post.createdAt, 'yyyy-MM-dd')}"></span></label>
+                </div>
+
+                <div class="col-12 mb-5" style="white-space:pre-line;">
+                    <span th:utext="${#strings.replace(post.content, '\n', '<br>')}"></span>
+
+                </div>
+
+                <!-- comment start-->
+                <div th:include="/comments/_comments :: comentFragment"></div>
+                <!-- comment end-->
+
+
+                <!-- Button -->
+                <div class="text-end">
+                    <a th:href="@{/posts/{board_code}/{id}/reply(board_code=${board_code},id=${id})}"><button class="btn btn-lg btn-dark mb-0 ">답변</button></a>
+                    <a th:href="@{/posts/{board_code}/{id}/edit/password(board_code=${board_code},id=${id})}"><button class="btn btn-lg btn-dark mb-0 ">수정</button></a>
+                    <a th:href="@{/posts/{board_code}/{id}/delete/password(board_code=${board_code},id=${id})}"><button class="btn btn-lg btn-dark mb-0 text-end">삭제</button></a>
+                    <a th:href="@{/posts/{board_code}?page={page}&keyword={keyword}(board_code=${board_code},page=${page},keyword=${keyword})}"><button class="btn btn-lg btn-primary mb-0 text-end">목록</button></a>
+                </div>
+
+            </div>
+            </th:block>
+
+
+
+
+        </div>
+    </section>
+</main>
+<!-- **************** MAIN CONTENT END **************** -->
+<th:block th:replace="~{/layouts/footer :: footer}"></th:block>
+</html>
