@@ -47,3 +47,4 @@ jobs:
           region: ap-northeast-2
           deployment_package: ./build/libs/${{env.artifact}}
           existing_bucket_name: groom-mission-webservicebasic
+          use_existing_version_if_available: true
