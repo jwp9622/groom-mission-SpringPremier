@@ -46,6 +46,6 @@ jobs:
           version_label: github-action-${{steps.current-time.outputs.formattedTime}}
           region: ap-northeast-2
           deployment_package: ./build/libs/${{env.artifact}}
-          bucket_name: groom-mission-deploy-bucket
+          bucket_name: elasticbeanstalk-ap-northeast-2-438499430635
           wait_for_environment_recovery: 180 # health check 시간 증가시켜 오류 깃허브 액션 빌드 오류 해결.
           wait_for_deployment: true
