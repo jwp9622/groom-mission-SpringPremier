@@ -46,5 +46,3 @@ jobs:
           version_label: github-action-${{steps.current-time.outputs.formattedTime}}
           region: ap-northeast-2
           deployment_package: ./build/libs/${{env.artifact}}
-          bucket_name: elasticbeanstalk-ap-northeast-2-438499430635
-          wait_for_deployment: true
