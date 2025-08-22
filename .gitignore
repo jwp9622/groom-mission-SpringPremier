@@ -27,6 +27,7 @@ out/
 !**/src/test/**/out/
 !**/resources/**
 application.properties
+application_test.properties
 
 ### NetBeans ###
 /nbproject/private/
@@ -37,3 +38,5 @@ application.properties
 
 ### VS Code ###
 .vscode/
+
+.env

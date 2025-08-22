@@ -6,13 +6,15 @@ import com.example.WebServiceBasic.domain.user.service.UserService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-@Transactional
 @SpringBootTest
+@Transactional
+@ActiveProfiles("test")
 public class UserServiceTest {
 
     @Autowired
