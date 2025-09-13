@@ -10,6 +10,7 @@ public class AdminController {
     @GetMapping("/admin")
     public String AdminMain(Model model){
 
+        System.out.println("test");
         return "admin/main";
 
     }
