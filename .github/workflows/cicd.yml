@@ -3,7 +3,7 @@ name: mission-WebBasicBasic
 # 2 워크플로가 시작될 조건 지정
 on:
   push:
-    branches: [ main ]
+    branches: [  "main", "develop"  ]
 concurrency:
   group: beanstalk-deploy
   cancel-in-progress: true
