@@ -1,5 +1,5 @@
 # 1 워크플로의 이름 지정
-name: mission-WebBasicBasic
+name: Groom-mission-SpringPremier
 # 2 워크플로가 시작될 조건 지정
 on:
   push:
@@ -44,12 +44,13 @@ jobs:
         with:
           aws_access_key: ${{secrets.AWS_ACCESS_KEY_ID}}
           aws_secret_key: ${{secrets.AWS_SECRET_ACCESS_KEY}}
-          application_name: groom-mission-SpringPremier
+          application_name: Groom-mission-SpringPremier
           environment_name: Groom-mission-SpringPremier-env
           #version_label: github-action2-${{steps.current-time.outputs.formattedTime}}
           version_label: github-action2-${{steps.current-time.outputs.formattedTime}}-${{ github.sha }}
           region: ap-northeast-2
           deployment_package: ./build/libs/${{env.artifact}}
-          existing_bucket_name: groom-mission-webservicebasic
+          existing_bucket_name: groom-mission-springpremier
           use_existing_version_if_available: true
           wait_for_environment_recovery: 180
+
