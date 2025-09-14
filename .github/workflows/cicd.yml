@@ -38,8 +38,31 @@ jobs:
           FILE=$(ls ./build/libs/*.jar | head -n 1)
           echo "artifact=$(basename $FILE)" >> $GITHUB_ENV
 
-      # 4 빈스토크 배포
+      #CD 단계 - 오직 main 브랜치에서만 실행
+      - name: Configure AWS credentials
+        if: github.ref == 'refs/heads/main'
+        run: |
+          aws configure set aws_access_key_id "${{ secrets.AWS_ACCESS_KEY_ID }}"
+          aws configure set aws_secret_access_key "${{ secrets.AWS_SECRET_ACCESS_KEY }}"
+          aws configure set region ap-northeast-2
+
+      # 4. 환경 변수 설정등록
+      - name: Set environment variables on Beanstalk
+        if: github.ref == 'refs/heads/main'
+        run: |
+          pip install --upgrade awsebcli
+          eb init SpringPremier --platform "Java" --region ap-northeast-2
+          eb use SpringPremier
+          eb setenv \
+          SPRING_DATASOURCE_PASSWORD="${{ secrets.SPRING_DATASOURCE_PASSWORD }}" \
+          SPRING_DATASOURCE_USERNAME="${{ secrets.SPRING_DATASOURCE_USERNAME }}" \
+          SPRING_JWT_SECRET="${{ secrets.SPRING_JWT_SECRET }}" \
+          SPRING_SECURITY_USER_NAME="${{ secrets.SPRING_SECURITY_USER_NAME }}" \
+          SPRING_SECURITY_USER_PASSWORD="${{ secrets.SPRING_SECURITY_USER_PASSWORD }}"
+
+      # 5 빈스토크 배포
       - name: Beanstalk Deploy
+        if: github.ref == 'refs/heads/main'
         uses: einaregilsson/beanstalk-deploy@v20
         with:
           aws_access_key: ${{secrets.AWS_ACCESS_KEY_ID}}
