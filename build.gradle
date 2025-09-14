@@ -1,86 +1,76 @@
-plugins {
-	id 'java'
-	id 'org.springframework.boot' version '3.4.5'
-	id 'io.spring.dependency-management' version '1.1.7'
-}
-
-group = 'com.example'
-version = '0.0.1-SNAPSHOT'
-
-java {
-	toolchain {
-		languageVersion = JavaLanguageVersion.of(21)
+	plugins {
+		id 'java'
+		id 'org.springframework.boot' version '3.4.5'
+		id 'io.spring.dependency-management' version '1.1.7'
 	}
-}
 
-repositories {
-	mavenCentral()
-}
+	group = 'com.example'
+	version = '0.0.1-SNAPSHOT'
 
-dependencies {
-	compileOnly 'org.projectlombok:lombok'
-	annotationProcessor 'org.projectlombok:lombok'
-	implementation 'org.springframework.boot:spring-boot-starter-aop' // 스프링 aop 추가
+	java {
+		toolchain {
+			languageVersion = JavaLanguageVersion.of(21)
+		}
+	}
 
-	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'	//자동 날짜 업데이트
-	implementation 'org.springframework.boot:spring-boot-starter-mustache'
-	implementation 'org.springframework.boot:spring-boot-starter-web'
-	runtimeOnly 'com.h2database:h2'
-	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+	repositories {
+		mavenCentral()
+	}
+	//.env 파일 읽기
+	dependencies {
+		implementation 'me.paulschwarz:spring-dotenv:2.2.0'
 
-	//security 3.4.5
-	implementation 'org.springframework.boot:spring-boot-starter-security'
-}
+		compileOnly 'org.projectlombok:lombok'
+		annotationProcessor 'org.projectlombok:lombok'
+		implementation 'org.springframework.boot:spring-boot-starter-aop' // 스프링 aop 추가
 
-// 서버 재시작 없이 Build - Recompile 만으로도 변경된 파일 확인 가능
-dependencies {
-	implementation 'org.springframework.boot:spring-boot-devtools'
-}
-//유효성 검사
-dependencies {
-	implementation 'org.springframework.boot:spring-boot-starter-validation'
-}
+		implementation 'org.springframework.boot:spring-boot-starter-data-jpa'	//자동 날짜 업데이트
+		implementation 'org.springframework.boot:spring-boot-starter-mustache'
+		implementation 'org.springframework.boot:spring-boot-starter-web'
+		runtimeOnly 'com.h2database:h2'
+		testImplementation 'org.springframework.boot:spring-boot-starter-test'
+		testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 
-//thymeleaf
-dependencies{
-	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
-	implementation 'nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect'
-	implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity6'
+		//security 3.4.5
+		implementation 'org.springframework.boot:spring-boot-starter-security'
 
-}
+		// 서버 재시작 없이 Build - Recompile 만으로도 변경된 파일 확인 가능
+		implementation 'org.springframework.boot:spring-boot-devtools'
 
-//db connect
-dependencies {
-	///implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-	//runtimeOnly 'com.mysql:mysql-connector-j'
-}
+		//유효성 검사
+		implementation 'org.springframework.boot:spring-boot-starter-validation'
 
-tasks.named('test') {
-	useJUnitPlatform()
-}
-//jwt
-/*
-dependencies {
-	implementation 'io.jsonwebtoken:jjwt-api:0.12.3'
-	implementation 'io.jsonwebtoken:jjwt-impl:0.12.3'
-	implementation 'io.jsonwebtoken:jjwt-jackson:0.12.3'
-}
-*/
+		//thymeleaf
+		implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+		implementation 'nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect'
+		implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity6'
 
-//JWT
-dependencies {
-	implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
-	implementation 'io.jsonwebtoken:jjwt-impl:0.11.5'
-	implementation 'io.jsonwebtoken:jjwt-jackson:0.11.5'
-}
 
-// 이 부분이 중요
-bootJar {
-	mainClass = 'com.example.SpringPremier.SpringPremierApplication'
-}
+		//db connect
+		///implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+		//runtimeOnly 'com.mysql:mysql-connector-j'
 
-jar {
-	enabled = false // plain jar는 사용 안 한다면 disable
-}
+		//JWT
+		implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
+		implementation 'io.jsonwebtoken:jjwt-impl:0.11.5'
+		implementation 'io.jsonwebtoken:jjwt-jackson:0.11.5'
+
+		//dotenv
+		//implementation 'io.github.cdimascio:java-dotenv:5.2.2' // 또는 최신 버전
+		implementation 'io.github.cdimascio:dotenv-java:3.0.0' // 5.x가 아닌 안정된 3.x
+
+	}
+
+	tasks.named('test') {
+		useJUnitPlatform()
+	}
+
+	// 이 부분이 중요
+	bootJar {
+		mainClass = 'com.example.SpringPremier.SpringPremierApplication'
+	}
+
+	jar {
+		enabled = false // plain jar는 사용 안 한다면 disable
+	}
 
