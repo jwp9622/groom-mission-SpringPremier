@@ -52,7 +52,7 @@ jobs:
         run: |
           pip install --upgrade awsebcli
           eb init SpringPremier --platform "Corretto 21 running on 64bit Amazon Linux 2023" --region ap-northeast-2
-          eb use SpringPremier
+          eb use SpringPremier-env
           eb setenv \
           SPRING_DATASOURCE_PASSWORD="${{ secrets.SPRING_DATASOURCE_PASSWORD }}" \
           SPRING_DATASOURCE_USERNAME="${{ secrets.SPRING_DATASOURCE_USERNAME }}" \
