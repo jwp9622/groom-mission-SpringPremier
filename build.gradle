@@ -83,3 +83,4 @@ bootJar {
 jar {
 	enabled = false // plain jar는 사용 안 한다면 disable
 }
+
