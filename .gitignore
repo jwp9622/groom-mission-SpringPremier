@@ -39,4 +39,4 @@ application_test.properties
 ### VS Code ###
 .vscode/
 
-.env
+src/main/resources/.env
