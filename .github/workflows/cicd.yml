@@ -51,7 +51,6 @@ jobs:
         if: github.ref == 'refs/heads/main'
         run: |
           pip install --upgrade awsebcli
-#          eb init SpringPremier --platform "Java" --region ap-northeast-2
           eb init SpringPremier --platform "Corretto 21 running on 64bit Amazon Linux 2023" --region ap-northeast-2
           eb use SpringPremier
           eb setenv \
