@@ -3,9 +3,7 @@ plugins {
 	id 'org.springframework.boot' version '3.4.5'
 	id 'io.spring.dependency-management' version '1.1.7'
 }
-jar {
-	enabled = false
-}
+
 group = 'com.example'
 version = '0.0.1-SNAPSHOT'
 
@@ -77,3 +75,11 @@ dependencies {
 	implementation 'io.jsonwebtoken:jjwt-jackson:0.11.5'
 }
 
+// 이 부분이 중요
+bootJar {
+	mainClass = 'com.example.SpringPremier.SpringPremierApplication'
+}
+
+jar {
+	enabled = false // plain jar는 사용 안 한다면 disable
+}
