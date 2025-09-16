@@ -17,14 +17,27 @@ public class SpringPremierApplication {
 			.ignoreIfMissing()  // ✅ .env 없으면 무시
 			.load();
 
-		System.setProperty("SPRING_DATASOURCE_USERNAME", dotenv.get("SPRING_DATASOURCE_USERNAME"));
-		System.setProperty("SPRING_DATASOURCE_PASSWORD", dotenv.get("SPRING_DATASOURCE_PASSWORD"));
-		System.setProperty("SPRING_SECURITY_USER_NAME", dotenv.get("SPRING_SECURITY_USER_NAME"));
-		System.setProperty("SPRING_SECURITY_USER_PASSWORD", dotenv.get("SPRING_SECURITY_USER_PASSWORD"));
-		System.setProperty("SPRING_JWT_SECRET", dotenv.get("SPRING_JWT_SECRET"));
+		setPropertyFromEnvOrDotenv("SPRING_DATASOURCE_USERNAME", dotenv);
+		setPropertyFromEnvOrDotenv("SPRING_DATASOURCE_PASSWORD", dotenv);
+		setPropertyFromEnvOrDotenv("SPRING_SECURITY_USER_NAME", dotenv);
+		setPropertyFromEnvOrDotenv("SPRING_SECURITY_USER_PASSWORD", dotenv);
+		setPropertyFromEnvOrDotenv("SPRING_JWT_SECRET", dotenv);
 
 		SpringApplication.run(SpringPremierApplication.class, args);
 
+	}
+
+	private static void setPropertyFromEnvOrDotenv(String key, Dotenv dotenv) {
+		String value = System.getenv(key);
+		if (value == null) {
+			value = dotenv.get(key);
+		}
+
+		if (value != null) {
+			System.setProperty(key, value);
+		} else {
+			System.err.printf("❗ 환경변수 또는 .env에 '%s'가 설정되지 않았습니다.%n", key);
+		}
 	}
 
 }
