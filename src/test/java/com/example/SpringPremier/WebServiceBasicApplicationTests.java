@@ -15,8 +15,8 @@ class WebServiceBasicApplicationTests {
 
 	@BeforeAll
 	static void loadEnv() {
-		Dotenv dotenv = Dotenv.configure().load();
 
+		Dotenv dotenv = Dotenv.configure().load();
 		System.setProperty("SPRING_DATASOURCE_USERNAME", dotenv.get("SPRING_DATASOURCE_USERNAME"));
 		System.setProperty("SPRING_DATASOURCE_PASSWORD", dotenv.get("SPRING_DATASOURCE_PASSWORD"));
 		System.setProperty("SPRING_SECURITY_USER_NAME", dotenv.get("SPRING_SECURITY_USER_NAME"));
