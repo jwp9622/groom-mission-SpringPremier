@@ -52,7 +52,6 @@ jobs:
           --region ap-northeast-2 \
           --platform "Corretto 21 running on 64bit Amazon Linux 2023" \
           --keyname "your-ec2-keypair-name" \
-          --service-role "aws-elasticbeanstalk-service-role" \
           --profile default
           
 
