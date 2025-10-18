@@ -48,8 +48,13 @@ jobs:
 
       - name: Initialize Elastic Beanstalk
         run: |
-          eb init my-eb-app-name --region ap-northeast-2 \
-          --platform "Corretto 21 running on 64bit Amazon Linux 2023"
+          eb init mission_SpringPremier \
+          --region ap-northeast-2 \
+          --platform "Corretto 21 running on 64bit Amazon Linux 2023" \
+          --keyname "your-ec2-keypair-name" \
+          --service-role "aws-elasticbeanstalk-service-role" \
+          --profile default
+          
 
       #CD 단계 - 오직 main 브랜치에서만 실행
       - name: Configure AWS credentials
