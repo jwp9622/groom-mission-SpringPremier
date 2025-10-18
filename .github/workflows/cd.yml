@@ -1,9 +1,12 @@
 # 1 워크플로의 이름 지정
-name: SpringPremier
+name: SpringPremier cd
 # 2 워크플로가 시작될 조건 지정
 on:
   push:
-    branches: [  "main", "develop"  ]
+    branches: [ "main", "develop" ]
+  pull_request:
+    branches: [ "main", "develop" ]
+
 concurrency:
   group: beanstalk-deploy
   cancel-in-progress: true
