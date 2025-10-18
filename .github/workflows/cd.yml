@@ -90,7 +90,7 @@ jobs:
       - name: Wait for EB environment to be Ready
         if: github.ref == 'refs/heads/main'
         run: |
-          ENV_NAME="MissionSpringPremier-env"
+          ENV_NAME="MissionSpringPremierenv-env"
           STATUS=$(aws elasticbeanstalk describe-environments \
             --environment-names $ENV_NAME \
             --query "Environments[0].Status" --output text)
