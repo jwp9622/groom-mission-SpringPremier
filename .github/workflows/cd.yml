@@ -134,5 +134,5 @@ jobs:
           region: ap-northeast-2
           deployment_package: ./build/libs/${{env.artifact}}
           existing_bucket_name: groom-mission-springpremier
-          use_existing_version_if_available: true
+          use_existing_version_if_available: false
           wait_for_environment_recovery: 300
