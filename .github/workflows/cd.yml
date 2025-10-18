@@ -85,6 +85,26 @@ jobs:
 #          echo "SPRING_DATASOURCE_USERNAME=${{ secrets.SPRING_DATASOURCE_USERNAME }}" >> $GITHUB_ENV
 #          echo "SPRING_SECURITY_USER_NAME=${{ secrets.SPRING_SECURITY_USER_NAME }}" >> $GITHUB_ENV
 
+
+      # 7. 배포 전 EB 환경 상태 확인
+      - name: Wait for EB environment to be Ready
+        if: github.ref == 'refs/heads/main'
+        run: |
+          ENV_NAME="MissionSpringPremier-env"
+          STATUS=$(aws elasticbeanstalk describe-environments \
+            --environment-names $ENV_NAME \
+            --query "Environments[0].Status" --output text)
+          echo "Current Status: $STATUS"
+          while [[ "$STATUS" != "Ready" ]]; do
+            echo "Environment not Ready. Waiting 15s..."
+            sleep 15
+            STATUS=$(aws elasticbeanstalk describe-environments \
+              --environment-names $ENV_NAME \
+              --query "Environments[0].Status" --output text)
+          done
+          echo "Environment is Ready!"
+
+
       # 7. 환경 변수 설정 (main 브랜치만)
       - name: Set Beanstalk environment variables
         if: github.ref == 'refs/heads/main'
