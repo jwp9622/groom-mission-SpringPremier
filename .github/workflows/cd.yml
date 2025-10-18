@@ -40,6 +40,12 @@ jobs:
           FILE=$(ls ./build/libs/*.jar | head -n 1)
           echo "artifact=$(basename $FILE)" >> $GITHUB_ENV
 
+      - name: Install AWS CLI
+        run: |
+          python3 -m pip install --upgrade pip
+          pip install awscli --upgrade --user
+          echo "$HOME/.local/bin" >> $GITHUB_PATH
+
       # 6. AWS CLI 설치
       - name: Install AWS CLI
         run: |
