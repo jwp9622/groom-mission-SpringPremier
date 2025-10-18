@@ -1,34 +1,32 @@
-# 1 워크플로의 이름 지정
-name: SpringPremier cd
-# 2 워크플로가 시작될 조건 지정
+name: SpringPremier CD
+
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "main", "develop" ]
   pull_request:
-    branches: [ "main" ]
-
+    branches: [ "main", "develop" ]
 concurrency:
   group: beanstalk-deploy
   cancel-in-progress: true
+
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      # 1. 코드 체크아웃
+      - uses: actions/checkout@v3
 
-      - uses: actions/setup-java@v4
+      # 2. Java 설정
+      - uses: actions/setup-java@v3
         with:
           distribution: 'corretto'
           java-version: '21'
 
-      - name: Grant execute permission for gradlew
-        run: chmod +x gradlew
+      # 3. gradlew 권한 + 빌드
+      - run: chmod +x gradlew
+      - run: ./gradlew clean build -x test
 
-      - name: Build with Gradle
-        run: ./gradlew clean build
-
-      #2 현재시간가져오기
+      # 4. 현재 시간 가져오기
       - name: Get current time
         uses: josStorer/get-current-time@v2.0.2
         id: current-time
@@ -36,77 +34,33 @@ jobs:
           format: YYYY-MM-DDTHH-mm-ss
           utcOffset: "+09:00"
 
-      # 3 배포용 패키지 경로 저장
-      - name: Set artifact name safely
+      # 5. 배포 패키지 경로
+      - name: Set artifact name
         run: |
           FILE=$(ls ./build/libs/*.jar | head -n 1)
           echo "artifact=$(basename $FILE)" >> $GITHUB_ENV
 
-#      - name: Install AWS Elastic Beanstalk CLI
-#        run: |
-#          pip install --upgrade pip
-#          pip install awsebcli
-#
-#      - name: Initialize Elastic Beanstalk
-#        run: |
-#          eb init mission_SpringPremier \
-#          --region ap-northeast-2 \
-#          --platform "Corretto 21 running on 64bit Amazon Linux 2023" \
-#          --keyname "your-ec2-keypair-name" \
-#
-#      #CD 단계 - 오직 main 브랜치에서만 실행
-#      - name: Configure AWS credentials
-#        if: github.ref == 'refs/heads/main'
-#        run: |
-#          aws configure set aws_access_key_id "${{ secrets.AWS_ACCESS_KEY_ID }}"
-#          aws configure set aws_secret_access_key "${{ secrets.AWS_SECRET_ACCESS_KEY }}"
-#          aws configure set region ap-northeast-2
-
-      # 6. AWS 자격증명 설정 (main 브랜치만)
-      - name: Configure AWS credentials
-        if: github.ref == 'refs/heads/main'
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ap-northeast-2
-
-#      # 4. 환경 변수 설정등록
-#      - name: .env setting
-#        if: github.ref == 'refs/heads/main'
-#        run: |
-#          eb setenv \
-#          SPRING_DATASOURCE_PASSWORD="${{ secrets.SPRING_DATASOURCE_PASSWORD }}" \
-#          SPRING_DATASOURCE_USERNAME="${{ secrets.SPRING_DATASOURCE_USERNAME }}" \
-#          SPRING_JWT_SECRET="${{ secrets.SPRING_JWT_SECRET }}" \
-#          SPRING_SECURITY_USER_NAME="${{ secrets.SPRING_SECURITY_USER_NAME }}" \
-#          SPRING_SECURITY_USER_PASSWORD="${{ secrets.SPRING_SECURITY_USER_PASSWORD }}"
-#
-#          echo "SPRING_DATASOURCE_USERNAME=${{ secrets.SPRING_DATASOURCE_USERNAME }}" >> $GITHUB_ENV
-#          echo "SPRING_SECURITY_USER_NAME=${{ secrets.SPRING_SECURITY_USER_NAME }}" >> $GITHUB_ENV
-
-
-      # 7. 배포 전 EB 환경 상태 확인
-      - name: Wait for EB environment to be Ready
-        if: github.ref == 'refs/heads/main'
+      # 6. AWS CLI 설치
+      - name: Install AWS CLI
         run: |
-          ENV_NAME="MissionSpringPremierenv-env"
-          STATUS=$(aws elasticbeanstalk describe-environments \
-            --environment-names $ENV_NAME \
-            --query "Environments[0].Status" --output text)
-          echo "Current Status: $STATUS"
-          while [[ "$STATUS" != "Ready" ]]; do
-            echo "Environment not Ready. Waiting 15s..."
-            sleep 15
-            STATUS=$(aws elasticbeanstalk describe-environments \
-              --environment-names $ENV_NAME \
-              --query "Environments[0].Status" --output text)
-          done
-          echo "Environment is Ready!"
+          sudo apt-get update
+          sudo apt-get install -y awscli
 
+      # 7. 초기 배포 여부 체크
+      - name: Check if initial deployment
+        id: check_initial
+        run: |
+          VERSION=$(aws elasticbeanstalk describe-environments \
+            --environment-names MissionSpringPremierenv-env \
+            --query "Environments[0].VersionLabel" \
+            --output text)
+          if [[ "$VERSION" == "None" ]]; then
+            echo "initial=true" >> $GITHUB_OUTPUT
+          else
+            echo "initial=false" >> $GITHUB_OUTPUT
+          fi
 
-      # 7. 환경 변수 설정 (main 브랜치만)
-      - name: Set Beanstalk environment variables
+      - name: Set EB environment variables
         if: github.ref == 'refs/heads/main'
         run: |
           echo "SPRING_DATASOURCE_USERNAME=${{ secrets.SPRING_DATASOURCE_USERNAME }}" >> $GITHUB_ENV
@@ -118,35 +72,37 @@ jobs:
                               Namespace=aws:elasticbeanstalk:application:environment,OptionName=SPRING_JWT_SECRET,Value=${{ secrets.SPRING_JWT_SECRET }} \
                               Namespace=aws:elasticbeanstalk:application:environment,OptionName=SPRING_SECURITY_USER_NAME,Value=${{ secrets.SPRING_SECURITY_USER_NAME }} \
                               Namespace=aws:elasticbeanstalk:application:environment,OptionName=SPRING_SECURITY_USER_PASSWORD,Value=${{ secrets.SPRING_SECURITY_USER_PASSWORD }}
-  
-      #초기배포 여부 체크
-      - name: Check if initial deployment
-        id: check_initial
-        run: |
-          VERSION=$(aws elasticbeanstalk describe-environments \
-          --environment-names MissionSpringPremierenv-env \
-          --query "Environments[0].VersionLabel" \
-          --output text)
-          if [[ "$VERSION" == "None" ]]; then
-          echo "initial=true" >> $GITHUB_OUTPUT
-          else
-          echo "initial=false" >> $GITHUB_OUTPUT
-          fi
 
-      # 5 빈스토크 배포
+      # 8. 초기 배포 (CLI 직접 호출)
+      - name: Initial Beanstalk Deploy (CLI)
+        if: steps.check_initial.outputs.initial == 'true' && github.ref == 'refs/heads/main'
+        run: |
+          echo "Uploading artifact to S3..."
+          aws s3 cp ./build/libs/${{ env.artifact }} s3://groom-mission-springpremier/mission_SpringPremier_env/${{ github.sha }}.zip
+          
+          echo "Creating application version..."
+          aws elasticbeanstalk create-application-version \
+          --application-name mission_SpringPremier_env \
+          --version-label initial-${{ github.sha }} \
+          --source-bundle S3Bucket=groom-mission-springpremier,S3Key=mission_SpringPremier_env/${{ github.sha }}.zip
+          
+          echo "Updating environment..."
+          aws elasticbeanstalk update-environment \
+          --environment-name MissionSpringPremierenv-env \
+          --version-label initial-${{ github.sha }}
+
+      # 9. 이후 배포 (Action 사용)
       - name: Beanstalk Deploy
-        if: steps.check_initial.outputs.initial == 'true' || github.ref == 'refs/heads/main'
+        if: steps.check_initial.outputs.initial == 'false' && github.ref == 'refs/heads/main'
         uses: einaregilsson/beanstalk-deploy@v20
         with:
-          aws_access_key: ${{secrets.AWS_ACCESS_KEY_ID}}
-          aws_secret_key: ${{secrets.AWS_SECRET_ACCESS_KEY}}
+          aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           application_name: mission_SpringPremier_env
           environment_name: MissionSpringPremierenv-env
-          #version_label: github-action2-${{steps.current-time.outputs.formattedTime}}
-          version_label: github-action2-${{steps.current-time.outputs.formattedTime}}-${{ github.sha }}
-
+          version_label: github-action2-${{ steps.current-time.outputs.formattedTime }}-${{ github.sha }}
           region: ap-northeast-2
-          deployment_package: ./build/libs/${{env.artifact}}
+          deployment_package: ./build/libs/${{ env.artifact }}
           existing_bucket_name: groom-mission-springpremier
           use_existing_version_if_available: false
           wait_for_environment_recovery: 300
