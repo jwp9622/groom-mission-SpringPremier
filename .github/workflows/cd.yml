@@ -41,22 +41,26 @@ jobs:
           FILE=$(ls ./build/libs/*.jar | head -n 1)
           echo "artifact=$(basename $FILE)" >> $GITHUB_ENV
 
+      - name: Install AWS Elastic Beanstalk CLI
+        run: |
+          pip install --upgrade pip
+          pip install awsebcli
+
+      - name: Initialize Elastic Beanstalk
+        run: |
+          eb init my-eb-app-name --region ap-northeast-2 \
+          --platform "Corretto 21 running on 64bit Amazon Linux 2023"
+
       #CD 단계 - 오직 main 브랜치에서만 실행
-      - name: Configure AWS credentials11
+      - name: Configure AWS credentials
         if: github.ref == 'refs/heads/main'
         run: |
           aws configure set aws_access_key_id "${{ secrets.AWS_ACCESS_KEY_ID }}"
           aws configure set aws_secret_access_key "${{ secrets.AWS_SECRET_ACCESS_KEY }}"
           aws configure set region ap-northeast-2
 
-      - name: Install AWS Elastic Beanstalk CLI11
-        run: |
-          pip install --upgrade pip
-          pip install awsebcli
-      
-
       # 4. 환경 변수 설정등록
-      - name: .env setting11
+      - name: .env setting
         if: github.ref == 'refs/heads/main'
         run: |
           eb setenv \
