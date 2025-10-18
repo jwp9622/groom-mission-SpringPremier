@@ -49,6 +49,12 @@ jobs:
           aws configure set aws_secret_access_key "${{ secrets.AWS_SECRET_ACCESS_KEY }}"
           aws configure set region ap-northeast-2
 
+      - name: Install AWS Elastic Beanstalk CLI
+        run: |
+          pip install --upgrade pip
+          pip install awsebcli
+      
+
       # 4. 환경 변수 설정등록
       - name: .env setting
         if: github.ref == 'refs/heads/main'
