@@ -118,10 +118,20 @@ jobs:
                               Namespace=aws:elasticbeanstalk:application:environment,OptionName=SPRING_JWT_SECRET,Value=${{ secrets.SPRING_JWT_SECRET }} \
                               Namespace=aws:elasticbeanstalk:application:environment,OptionName=SPRING_SECURITY_USER_NAME,Value=${{ secrets.SPRING_SECURITY_USER_NAME }} \
                               Namespace=aws:elasticbeanstalk:application:environment,OptionName=SPRING_SECURITY_USER_PASSWORD,Value=${{ secrets.SPRING_SECURITY_USER_PASSWORD }}
-
+  
+      #초기배포 여부 체크
+      - name: Check if initial deployment
+        id: check_initial
+        run: |
+          VERSION=$(aws elasticbeanstalk describe-environments \
+            --environment-names MissionSpringPremierenv-env \
+            --query "Environments[0].VersionLabel" \
+            --output text)
+          echo "version=$VERSION" >> $GITHUB_ENV
+          
       # 5 빈스토크 배포
       - name: Beanstalk Deploy
-        if: github.ref == 'refs/heads/main'
+        if: env.version == 'None' || github.ref == 'refs/heads/main'
         uses: einaregilsson/beanstalk-deploy@v20
         with:
           aws_access_key: ${{secrets.AWS_ACCESS_KEY_ID}}
