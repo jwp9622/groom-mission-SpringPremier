@@ -85,7 +85,7 @@ jobs:
           application_name: mission_SpringPremier_env
           environment_name: MissionSpringPremierenv-env
           #version_label: github-action2-${{steps.current-time.outputs.formattedTime}}
-          version_label: spring-premier-${{steps.current-time.outputs.formattedTime}}-${{ github.sha }}
+          version_label: github-action2-${{steps.current-time.outputs.formattedTime}}-${{ github.sha }}
 
           region: ap-northeast-2
           deployment_package: ./build/libs/${{env.artifact}}
