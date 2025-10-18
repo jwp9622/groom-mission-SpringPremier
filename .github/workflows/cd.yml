@@ -95,6 +95,7 @@ jobs:
       - name: Create .env file
         run: |
           echo "Creating .env file..."
+          cd /var/app/current
           cat > .env <<EOL
           SPRING_DATASOURCE_USERNAME=${{ secrets.SPRING_DATASOURCE_USERNAME }}
           SPRING_DATASOURCE_PASSWORD=${{ secrets.SPRING_DATASOURCE_PASSWORD }}
