@@ -92,23 +92,6 @@ jobs:
                               Namespace=aws:elasticbeanstalk:application:environment,OptionName=SPRING_SECURITY_USER_NAME,Value=${{ secrets.SPRING_SECURITY_USER_NAME }} \
                               Namespace=aws:elasticbeanstalk:application:environment,OptionName=SPRING_SECURITY_USER_PASSWORD,Value=${{ secrets.SPRING_SECURITY_USER_PASSWORD }}
 
-      # 8. 초기 배포 (CLI 직접 호출)
-      - name: Initial Beanstalk Deploy (CLI)
-        if: steps.check_initial.outputs.initial == 'true' && github.ref == 'refs/heads/main'
-        run: |
-          echo "Uploading artifact to S3..."
-          aws s3 cp ./build/libs/${{ env.artifact }} s3://groom-mission-springpremier/mission_SpringPremier_env/${{ github.sha }}.zip
-          
-          echo "Creating application version..."
-          aws elasticbeanstalk create-application-version \
-          --application-name mission_SpringPremier_env \
-          --version-label initial-${{ github.sha }} \
-          --source-bundle S3Bucket=groom-mission-springpremier,S3Key=mission_SpringPremier_env/${{ github.sha }}.zip
-          
-          echo "Updating environment..."
-          aws elasticbeanstalk update-environment \
-          --environment-name MissionSpringPremierenv-env \
-          --version-label initial-${{ github.sha }}
 
       - name: Wait for EB environment to be Ready
         run: |
@@ -127,9 +110,28 @@ jobs:
           done
           echo "ready=true" >> $GITHUB_OUTPUT
 
+
+      # 8. 초기 배포 (CLI 직접 호출)
+      - name: Initial Beanstalk Deploy (CLI)
+        if: github.ref == 'refs/heads/main'
+        run: |
+          echo "Uploading artifact to S3..."
+          aws s3 cp ./build/libs/${{ env.artifact }} s3://groom-mission-springpremier/mission_SpringPremier_env/${{ github.sha }}.zip
+          
+          echo "Creating application version..."
+          aws elasticbeanstalk create-application-version \
+          --application-name mission_SpringPremier_env \
+          --version-label initial-${{ github.sha }} \
+          --source-bundle S3Bucket=groom-mission-springpremier,S3Key=mission_SpringPremier_env/${{ github.sha }}.zip
+          
+          echo "Updating environment..."
+          aws elasticbeanstalk update-environment \
+          --environment-name MissionSpringPremierenv-env \
+          --version-label initial-${{ github.sha }}
+
       # 9. 이후 배포 (Action 사용)
       - name: Beanstalk Deploy
-        if: steps.check_initial.outputs.initial == 'false' && steps.wait_ready.outputs.ready == 'true' && github.ref == 'refs/heads/main'
+        if: github.ref == 'refs/heads/main'
         uses: einaregilsson/beanstalk-deploy@v20
         with:
           aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
