@@ -92,7 +92,7 @@ jobs:
           echo "SPRING_DATASOURCE_USERNAME=${{ secrets.SPRING_DATASOURCE_USERNAME }}" >> $GITHUB_ENV
           echo "SPRING_SECURITY_USER_NAME=${{ secrets.SPRING_SECURITY_USER_NAME }}" >> $GITHUB_ENV
           aws elasticbeanstalk update-environment \
-            --environment-name MissionSpringPremier-env \
+            --environment-name 	MissionSpringPremierenv-env \
             --option-settings Namespace=aws:elasticbeanstalk:application:environment,OptionName=SPRING_DATASOURCE_PASSWORD,Value=${{ secrets.SPRING_DATASOURCE_PASSWORD }} \
                               Namespace=aws:elasticbeanstalk:application:environment,OptionName=SPRING_DATASOURCE_USERNAME,Value=${{ secrets.SPRING_DATASOURCE_USERNAME }} \
                               Namespace=aws:elasticbeanstalk:application:environment,OptionName=SPRING_JWT_SECRET,Value=${{ secrets.SPRING_JWT_SECRET }} \
