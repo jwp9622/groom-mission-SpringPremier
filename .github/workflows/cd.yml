@@ -41,19 +41,17 @@ jobs:
           FILE=$(ls ./build/libs/*.jar | head -n 1)
           echo "artifact=$(basename $FILE)" >> $GITHUB_ENV
 
-      - name: Install AWS Elastic Beanstalk CLI
-        run: |
-          pip install --upgrade pip
-          pip install awsebcli
-
-      - name: Initialize Elastic Beanstalk
-        run: |
-          eb init mission_SpringPremier \
-          --region ap-northeast-2 \
-          --platform "Corretto 21 running on 64bit Amazon Linux 2023" \
-          --keyname "your-ec2-keypair-name" \
-          --profile default
-          
+#      - name: Install AWS Elastic Beanstalk CLI
+#        run: |
+#          pip install --upgrade pip
+#          pip install awsebcli
+#
+#      - name: Initialize Elastic Beanstalk
+#        run: |
+#          eb init mission_SpringPremier \
+#          --region ap-northeast-2 \
+#          --platform "Corretto 21 running on 64bit Amazon Linux 2023" \
+#          --keyname "your-ec2-keypair-name" \
 
       #CD 단계 - 오직 main 브랜치에서만 실행
       - name: Configure AWS credentials
@@ -84,8 +82,8 @@ jobs:
         with:
           aws_access_key: ${{secrets.AWS_ACCESS_KEY_ID}}
           aws_secret_key: ${{secrets.AWS_SECRET_ACCESS_KEY}}
-          application_name: mission_SpringPremier
-          environment_name: MissionSpringPremier-env
+          application_name: mission_SpringPremier_env
+          environment_name: MissionSpringPremierenv-env
           #version_label: github-action2-${{steps.current-time.outputs.formattedTime}}
           version_label: spring-premier-${{steps.current-time.outputs.formattedTime}}-${{ github.sha }}
 
