@@ -92,23 +92,6 @@ jobs:
                               Namespace=aws:elasticbeanstalk:application:environment,OptionName=SPRING_SECURITY_USER_NAME,Value=${{ secrets.SPRING_SECURITY_USER_NAME }} \
                               Namespace=aws:elasticbeanstalk:application:environment,OptionName=SPRING_SECURITY_USER_PASSWORD,Value=${{ secrets.SPRING_SECURITY_USER_PASSWORD }}
 
-      - name: Wait for EB environment to be Ready
-        run: |
-          ENV_NAME="MissionSpringPremierenv-env"
-          STATUS=$(aws elasticbeanstalk describe-environments \
-            --environment-names $ENV_NAME \
-            --query "Environments[0].Status" --output text)
-          
-          echo "Current Status: $STATUS"
-          while [[ "$STATUS" != "Ready" ]]; do
-            echo "Environment not Ready. Waiting 15s..."
-            sleep 15
-            STATUS=$(aws elasticbeanstalk describe-environments \
-              --environment-names $ENV_NAME \
-              --query "Environments[0].Status" --output text)
-          done
-          echo "Environment is Ready!"
-
       # 8. 초기 배포 (CLI 직접 호출)
       - name: Initial Beanstalk Deploy (CLI)
         if: steps.check_initial.outputs.initial == 'true' && github.ref == 'refs/heads/main'
@@ -127,9 +110,26 @@ jobs:
           --environment-name MissionSpringPremierenv-env \
           --version-label initial-${{ github.sha }}
 
+      - name: Wait for EB environment to be Ready
+        run: |
+          ENV_NAME="MissionSpringPremierenv-env"
+          STATUS=$(aws elasticbeanstalk describe-environments \
+            --environment-names $ENV_NAME \
+            --query "Environments[0].Status" --output text)
+          
+          echo "Current Status: $STATUS"
+          while [[ "$STATUS" != "Ready" ]]; do
+            echo "Environment not Ready. Waiting 15s..."
+            sleep 15
+            STATUS=$(aws elasticbeanstalk describe-environments \
+              --environment-names $ENV_NAME \
+              --query "Environments[0].Status" --output text)
+          done
+          echo "ready=true" >> $GITHUB_OUTPUT
+
       # 9. 이후 배포 (Action 사용)
       - name: Beanstalk Deploy
-        if: steps.check_initial.outputs.initial == 'false' && github.ref == 'refs/heads/main'
+        if: steps.check_initial.outputs.initial == 'false' && steps.wait_ready.outputs.ready == 'true' && github.ref == 'refs/heads/main'
         uses: einaregilsson/beanstalk-deploy@v20
         with:
           aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
