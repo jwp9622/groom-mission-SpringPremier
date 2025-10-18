@@ -42,21 +42,21 @@ jobs:
           echo "artifact=$(basename $FILE)" >> $GITHUB_ENV
 
       #CD 단계 - 오직 main 브랜치에서만 실행
-      - name: Configure AWS credentials
+      - name: Configure AWS credentials11
         if: github.ref == 'refs/heads/main'
         run: |
           aws configure set aws_access_key_id "${{ secrets.AWS_ACCESS_KEY_ID }}"
           aws configure set aws_secret_access_key "${{ secrets.AWS_SECRET_ACCESS_KEY }}"
           aws configure set region ap-northeast-2
 
-      - name: Install AWS Elastic Beanstalk CLI
+      - name: Install AWS Elastic Beanstalk CLI11
         run: |
           pip install --upgrade pip
           pip install awsebcli
       
 
       # 4. 환경 변수 설정등록
-      - name: .env setting
+      - name: .env setting11
         if: github.ref == 'refs/heads/main'
         run: |
           eb setenv \
