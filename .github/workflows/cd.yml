@@ -1,9 +1,12 @@
 # 1 워크플로의 이름 지정
-name: SpringPremier
+name: SpringPremier cd
 # 2 워크플로가 시작될 조건 지정
 on:
   push:
-    branches: [  "main", "develop"  ]
+    branches: [ "main", "develop" ]
+  pull_request:
+    branches: [ "main", "develop" ]
+
 concurrency:
   group: beanstalk-deploy
   cancel-in-progress: true
@@ -47,15 +50,18 @@ jobs:
           aws configure set region ap-northeast-2
 
       # 4. 환경 변수 설정등록
-
       - name: .env setting
         if: github.ref == 'refs/heads/main'
         run: |
-          echo "SPRING_DATASOURCE_PASSWORD=${{ secrets.SPRING_DATASOURCE_PASSWORD }}" >> .env
-          echo "SPRING_DATASOURCE_USERNAME=${{ secrets.SPRING_DATASOURCE_USERNAME }}" >> .env
-          echo "SPRING_JWT_SECRET=${{ secrets.SPRING_JWT_SECRET }}" >> .env
-          echo "SPRING_SECURITY_USER_NAME=${{ secrets.SPRING_SECURITY_USER_NAME }}" >> .env
-          echo "SPRING_SECURITY_USER_PASSWORD=${{ secrets.SPRING_SECURITY_USER_PASSWORD }}" >> .env
+          eb setenv \
+          SPRING_DATASOURCE_PASSWORD="${{ secrets.SPRING_DATASOURCE_PASSWORD }}" \
+          SPRING_DATASOURCE_USERNAME="${{ secrets.SPRING_DATASOURCE_USERNAME }}" \
+          SPRING_JWT_SECRET="${{ secrets.SPRING_JWT_SECRET }}" \
+          SPRING_SECURITY_USER_NAME="${{ secrets.SPRING_SECURITY_USER_NAME }}" \
+          SPRING_SECURITY_USER_PASSWORD="${{ secrets.SPRING_SECURITY_USER_PASSWORD }}"
+          
+          echo "SPRING_DATASOURCE_USERNAME=${{ secrets.SPRING_DATASOURCE_USERNAME }}" >> $GITHUB_ENV
+          echo "SPRING_SECURITY_USER_NAME=${{ secrets.SPRING_SECURITY_USER_NAME }}" >> $GITHUB_ENV
 
       # 5 빈스토크 배포
       - name: Beanstalk Deploy
