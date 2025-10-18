@@ -112,6 +112,9 @@ jobs:
           key: ${{ secrets.EB_KEY }}
           port: 22
           script: |
+            echo "${{ secrets.EB_HOST }}"
+            echo "${{ secrets.EB_USER }}"
+            
             APP_DIR="/var/app/current"
             mkdir -p "$APP_DIR"
             cd "$APP_DIR"
