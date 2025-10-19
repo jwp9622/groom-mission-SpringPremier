@@ -84,29 +84,59 @@ jobs:
 #            sudo chmod 600 "$APP_DIR/.env"
 #            echo ".env file created at $APP_DIR"
 
-      # EB용 .ebextensions 폴더 생성 (export 자동화)
-      - name: Create .ebextensions for environment export
-        run: |
-          mkdir -p .ebextensions
-          cat > .ebextensions/00_export_env.config <<'EOL'
-          files:
-            "/opt/elasticbeanstalk/hooks/appdeploy/post/99_export_env.sh":
-              mode: "755"
-              owner: root
-              group: root
-              content: |
-                #!/bin/bash
-                ENV_FILE="/etc/profile.d/custom-env.sh"
+#      # EB용 .ebextensions 폴더 생성 (export 자동화)
+#      - name: Create .ebextensions for environment export
+#        run: |
+#          mkdir -p .ebextensions
+#          cat > .ebextensions/00_export_env.config <<'EOL'
+#          files:
+#            "/opt/elasticbeanstalk/hooks/appdeploy/post/99_export_env.sh":
+#              mode: "755"
+#              owner: root
+#              group: root
+#              content: |
+#                #!/bin/bash
+#                ENV_FILE="/etc/profile.d/custom-env.sh"
+#
+#                echo "export SPRING_DATASOURCE_USERNAME=${SPRING_DATASOURCE_USERNAME}" > $ENV_FILE
+#                echo "export SPRING_DATASOURCE_PASSWORD=${SPRING_DATASOURCE_PASSWORD}" >> $ENV_FILE
+#                echo "export SPRING_JWT_SECRET=${SPRING_JWT_SECRET}" >> $ENV_FILE
+#                echo "export SPRING_SECURITY_USER_NAME=${SPRING_SECURITY_USER_NAME}" >> $ENV_FILE
+#                echo "export SPRING_SECURITY_USER_PASSWORD=${SPRING_SECURITY_USER_PASSWORD}" >> $ENV_FILE
+#
+#                chmod +x $ENV_FILE
+#                echo "[EB] Exported env variables to $ENV_FILE"
+#          EOL
 
-                echo "export SPRING_DATASOURCE_USERNAME=${SPRING_DATASOURCE_USERNAME}" > $ENV_FILE
-                echo "export SPRING_DATASOURCE_PASSWORD=${SPRING_DATASOURCE_PASSWORD}" >> $ENV_FILE
-                echo "export SPRING_JWT_SECRET=${SPRING_JWT_SECRET}" >> $ENV_FILE
-                echo "export SPRING_SECURITY_USER_NAME=${SPRING_SECURITY_USER_NAME}" >> $ENV_FILE
-                echo "export SPRING_SECURITY_USER_PASSWORD=${SPRING_SECURITY_USER_PASSWORD}" >> $ENV_FILE
+      - name: Deploy to EB instance
+        uses: appleboy/ssh-action@v0.1.7
+        with:
+          host: ${{ secrets.EB_HOST }}
+          username: ${{ secrets.EB_USER }}
+          key: ${{ secrets.EB_KEY }}
+          port: 22
+          script: |
+            echo "Starting deployment on EB"
 
-                chmod +x $ENV_FILE
-                echo "[EB] Exported env variables to $ENV_FILE"
-          EOL
+            APP_DIR="/var/app/current"
+            cd "$APP_DIR"
+
+            # 환경변수 export용 스크립트 생성
+            sudo mkdir -p /etc/profile.d
+            sudo bash -c 'cat > /etc/profile.d/spring_env.sh <<EOL
+            export SPRING_DATASOURCE_USERNAME=${{ secrets.SPRING_DATASOURCE_USERNAME }}
+            export SPRING_DATASOURCE_PASSWORD=${{ secrets.SPRING_DATASOURCE_PASSWORD }}
+            export SPRING_JWT_SECRET=${{ secrets.SPRING_JWT_SECRET }}
+            export SPRING_SECURITY_USER_NAME=${{ secrets.SPRING_SECURITY_USER_NAME }}
+            export SPRING_SECURITY_USER_PASSWORD=${{ secrets.SPRING_SECURITY_USER_PASSWORD }}
+            EOL'
+            sudo chmod +x /etc/profile.d/spring_env.sh
+            echo "Environment variables exported"
+            
+            # 앱 재시작
+            sudo systemctl restart web.service
+            echo "Web service restarted"
+            
 
       # 8. 초기 배포 (CLI 직접 호출)
       - name: Initial Beanstalk Deploy (CLI)
