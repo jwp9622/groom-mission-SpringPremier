@@ -75,7 +75,6 @@ jobs:
             echo "EB_USER : ${{ secrets.EB_USER }}"
 
             APP_DIR="/var/app/current"
-            sudo mkdir -p "$APP_DIR"
             cd "$APP_DIR"
             sudo bash -c 'cat > .env <<EOL
             SPRING_DATASOURCE_USERNAME=${{ secrets.SPRING_DATASOURCE_USERNAME }}
