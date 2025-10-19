@@ -63,29 +63,29 @@ jobs:
             echo "initial=false" >> $GITHUB_OUTPUT
           fi
 
-#      - name: Create .env on EB
-#        uses: appleboy/ssh-action@v0.1.7
-#        with:
-#          host: ${{ secrets.EB_HOST }}
-#          username: ${{ secrets.EB_USER }}
-#          key: ${{ secrets.EB_KEY }}
-#          port: 22
-#          script: |
-#            echo "EB_HOST: ${{ secrets.EB_HOST }}"
-#            echo "EB_USER : ${{ secrets.EB_USER }}"
-#
-#            APP_DIR="/var/app/current"
-#            mkdir -p "$APP_DIR"
-#            cd "$APP_DIR"
-#            cat > .env <<EOL
-#            SPRING_DATASOURCE_USERNAME=${{ secrets.SPRING_DATASOURCE_USERNAME }}
-#            SPRING_DATASOURCE_PASSWORD=${{ secrets.SPRING_DATASOURCE_PASSWORD }}
-#            SPRING_JWT_SECRET=${{ secrets.SPRING_JWT_SECRET }}
-#            SPRING_SECURITY_USER_NAME=${{ secrets.SPRING_SECURITY_USER_NAME }}
-#            SPRING_SECURITY_USER_PASSWORD=${{ secrets.SPRING_SECURITY_USER_PASSWORD }}
-#            EOL
-#            chmod 600 .env
-#            echo ".env file created"
+      - name: Create .env on EB
+        uses: appleboy/ssh-action@v0.1.7
+        with:
+          host: ${{ secrets.EB_HOST }}
+          username: ${{ secrets.EB_USER }}
+          key: ${{ secrets.EB_KEY }}
+          port: 22
+          script: |
+            echo "EB_HOST: ${{ secrets.EB_HOST }}"
+            echo "EB_USER : ${{ secrets.EB_USER }}"
+
+            APP_DIR="/var/app/current"
+            mkdir -p "$APP_DIR"
+            cd "$APP_DIR"
+            cat > .env <<EOL
+            SPRING_DATASOURCE_USERNAME=${{ secrets.SPRING_DATASOURCE_USERNAME }}
+            SPRING_DATASOURCE_PASSWORD=${{ secrets.SPRING_DATASOURCE_PASSWORD }}
+            SPRING_JWT_SECRET=${{ secrets.SPRING_JWT_SECRET }}
+            SPRING_SECURITY_USER_NAME=${{ secrets.SPRING_SECURITY_USER_NAME }}
+            SPRING_SECURITY_USER_PASSWORD=${{ secrets.SPRING_SECURITY_USER_PASSWORD }}
+            EOL
+            chmod 600 .env
+            echo ".env file created"
 
       # 8. 초기 배포 (CLI 직접 호출)
       - name: Initial Beanstalk Deploy (CLI)
