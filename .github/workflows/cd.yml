@@ -121,22 +121,27 @@ jobs:
             APP_DIR="/var/app/current"
             cd "$APP_DIR"
 
-            # 환경변수 export용 스크립트 생성
-            sudo mkdir -p /etc/profile.d
-            sudo bash -c 'cat > /etc/profile.d/spring_env.sh <<EOL
-            export SPRING_DATASOURCE_USERNAME=${{ secrets.SPRING_DATASOURCE_USERNAME }}
-            export SPRING_DATASOURCE_PASSWORD=${{ secrets.SPRING_DATASOURCE_PASSWORD }}
-            export SPRING_JWT_SECRET=${{ secrets.SPRING_JWT_SECRET }}
-            export SPRING_SECURITY_USER_NAME=${{ secrets.SPRING_SECURITY_USER_NAME }}
-            export SPRING_SECURITY_USER_PASSWORD=${{ secrets.SPRING_SECURITY_USER_PASSWORD }}
+            # 1️⃣ systemd 환경변수 적용
+            sudo mkdir -p /etc/systemd/system/web.service.d
+            sudo bash -c 'cat > /etc/systemd/system/web.service.d/override.conf <<EOL
+            [Service]
+            Environment="PORT=5000"
+            Environment="SPRING_DATASOURCE_USERNAME=${{ secrets.SPRING_DATASOURCE_USERNAME }}"
+            Environment="SPRING_DATASOURCE_PASSWORD=${{ secrets.SPRING_DATASOURCE_PASSWORD }}"
+            Environment="SPRING_SECURITY_USER_NAME=${{ secrets.SPRING_SECURITY_USER_NAME }}"
+            Environment="SPRING_SECURITY_USER_PASSWORD=${{ secrets.SPRING_SECURITY_USER_PASSWORD }}"
+            Environment="SPRING_JWT_SECRET=${{ secrets.SPRING_JWT_SECRET }}"
             EOL'
-            sudo chmod +x /etc/profile.d/spring_env.sh
-            echo "Environment variables exported"
             
-            # 앱 재시작
+            # systemd reload
+            sudo systemctl daemon-reexec
+            
+            # 2️⃣ 앱 재시작
             sudo systemctl restart web.service
             echo "Web service restarted"
             
+            # 3️⃣ 확인
+            sudo systemctl status web.service --no-pager
 
       # 8. 초기 배포 (CLI 직접 호출)
       - name: Initial Beanstalk Deploy (CLI)
