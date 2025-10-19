@@ -73,7 +73,7 @@ jobs:
           script: |
             echo "EB_HOST: ${{ secrets.EB_HOST }}"
             echo "EB_USER : ${{ secrets.EB_USER }}"
-
+      
             APP_DIR="/var/app/current"
             cd "$APP_DIR"
             sudo bash -c 'cat > .env <<EOL
