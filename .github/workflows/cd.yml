@@ -110,7 +110,6 @@ jobs:
             sudo chmod 600 "$APP_DIR/.env"
             echo ".env file created at $APP_DIR"
       
-      
 
       # 8. 초기 배포 (CLI 직접 호출)
       - name: Initial Beanstalk Deploy (CLI)
