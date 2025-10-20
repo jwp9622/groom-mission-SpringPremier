@@ -62,33 +62,6 @@ jobs:
             echo "initial=false" >> $GITHUB_OUTPUT
           fi
 
-#      # 8. EB 서버에 배포
-#      - name: Deploy to EB instance
-#        uses: appleboy/ssh-action@v0.1.7
-#        with:
-#          host: ${{ secrets.EB_HOST }}
-#          username: ${{ secrets.EB_USER }}
-#          key: ${{ secrets.EB_KEY }}
-#          port: 22
-#          script: |
-#            echo "Starting deployment on EB"
-#
-#            APP_DIR="/var/app/current"
-#            cd "$APP_DIR"
-#
-#            # systemd override.conf 작성 (EnvironmentFile 사용)
-#            sudo mkdir -p /etc/systemd/system/web.service.d
-#            sudo bash -c 'cat > /etc/systemd/system/web.service.d/override.conf <<EOL
-#            [Service]
-#            EnvironmentFile=/opt/elasticbeanstalk/deployment/env
-#            EOL'
-#
-#            # systemd reload + 앱 재시작
-#            sudo systemctl daemon-reexec
-#            sudo systemctl restart web.service
-#            echo "Web service restarted"
-#            sudo systemctl status web.service --no-pager
-
       # 8. 초기 배포 (CLI 직접 호출)
       - name: Initial Beanstalk Deploy (CLI)
         if: github.ref == 'refs/heads/main'
