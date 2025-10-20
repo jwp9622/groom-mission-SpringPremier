@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
-<th:block th:replace="layouts/header :: header"></th:block>
+<th:block th:replace="~{layouts/header :: header}"></th:block>
 
 
 <!-- info -->
@@ -11,5 +11,5 @@
     <a href="javascript:;" onclick="history.back();" class="btn btn-dark mb-0">Back to Homepage</a>
 </div>
 
-<th:block th:replace="layouts/footer :: footer"></th:block>
+<th:block th:replace="~{layouts/footer :: footer}"></th:block>
 </html>
