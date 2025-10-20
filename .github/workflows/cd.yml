@@ -107,6 +107,23 @@ jobs:
           --environment-name MissionSpringPremierenv-env \
           --version-label initial-${{ github.sha }}
 
+
+      - name: Wait for EB environment to be ready
+        run: |
+          STATUS=""
+          while [ "$STATUS" != "Ready" ]; do
+            STATUS=$(aws elasticbeanstalk describe-environments \
+              --environment-names MissionSpringPremierenv-env \
+              --query "Environments[0].Status" \
+              --output text)
+            echo "Current status: $STATUS"
+            if [ "$STATUS" != "Ready" ]; then
+              echo "Environment not ready. Waiting 10s..."
+              sleep 10
+            fi
+          done
+          echo "Environment is ready. Continue deployment."
+
       # 9. 이후 배포 (Action 사용)
       - name: Beanstalk Deploy
         if: github.ref == 'refs/heads/main'
