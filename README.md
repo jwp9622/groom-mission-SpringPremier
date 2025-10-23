@@ -88,3 +88,9 @@ cd groom-mission-SpringPremier
 
 ### 2) 환경 변수 설정
 `.env.example` 파일을 복사해 `.env` 파일을 생성하고 필요한 환경 변수를 설정합니다.
+
+## 5. 배포
+- AWS IM github-action2
+- Elastic Beanstalk 애플리케이션명 mission_SpringPremier_env
+- Elastic Beanstalk 환경 MissionSpringPremierenv-env
+- AWS S3 groom-mission-springpremier
